@@ -1,6 +1,7 @@
 import { useEffect, useState, type DragEvent } from 'react';
 import {
   ReactFlow,
+  ReactFlowProvider,
   addEdge,
   type Connection,
   Background,
@@ -49,7 +50,7 @@ interface FlowEditorProps {
   workflow: WorkflowResponse;
 }
 
-export function FlowEditor({ workflow }: FlowEditorProps) {
+function FlowEditorContent({ workflow }: FlowEditorProps) {
   const { 
     nodes, 
     edges, 
@@ -210,5 +211,13 @@ export function FlowEditor({ workflow }: FlowEditorProps) {
         </ReactFlow>
       </div>
     </div>
+  );
+}
+
+export function FlowEditor({ workflow }: FlowEditorProps) {
+  return (
+    <ReactFlowProvider>
+      <FlowEditorContent workflow={workflow} />
+    </ReactFlowProvider>
   );
 }
