@@ -126,15 +126,6 @@ export function EditorSubheader({
 
         {/* Right side - Action buttons */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onTogglePalette}
-            className="flex items-center gap-2"
-          >
-            {isPaletteOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            Nodes
-          </Button>
           <motion.button
             {...BUTTON_MOTION_CONFIG}
             onClick={onTogglePalette}
