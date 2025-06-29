@@ -1,6 +1,6 @@
 import { Button } from '@/shared/ui/button';
 import { Separator } from '@/shared/ui/separator';
-import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Play } from 'lucide-react';
 import { Badge } from '@/shared/ui/badge';
 import { cn } from '@/shared/lib/utils';
 
