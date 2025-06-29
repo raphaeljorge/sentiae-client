@@ -44,6 +44,33 @@ const statusConfig = {
   }
 };
 
+const BUTTON_MOTION_CONFIG = {
+  initial: 'rest',
+  whileHover: 'hover',
+  whileTap: 'tap',
+  variants: {
+    rest: { maxWidth: '40px' },
+    hover: {
+      maxWidth: '140px',
+      transition: { type: 'spring', stiffness: 200, damping: 35, delay: 0.15 },
+    },
+    tap: { scale: 0.95 },
+  },
+  transition: { type: 'spring', stiffness: 250, damping: 25 },
+} as const;
+
+const LABEL_VARIANTS: Variants = {
+  rest: { opacity: 0, x: 4 },
+  hover: { opacity: 1, x: 0, visibility: 'visible' },
+  tap: { opacity: 1, x: 0, visibility: 'visible' },
+};
+
+const LABEL_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
+};
+
 export function EditorSubheader({
   workflowName = 'Untitled Workflow',
   isRunning = false,
@@ -108,6 +135,21 @@ export function EditorSubheader({
             {isPaletteOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             Nodes
           </Button>
+          <motion.button
+            {...BUTTON_MOTION_CONFIG}
+            onClick={toggleNodePalette}
+            className="flex h-8 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-neutral-200/60 dark:bg-neutral-600/80 px-2 py-1.5 text-neutral-600 dark:text-neutral-200 hover:bg-neutral-300/60 dark:hover:bg-neutral-500/80 transition-colors"
+            aria-label="Toggle Node Palette"
+          >
+            <PanelLeft className="h-4 w-4 shrink-0" />
+            <motion.span
+              variants={LABEL_VARIANTS}
+              transition={LABEL_TRANSITION}
+              className="invisible text-xs font-medium"
+            >
+              Node Palette
+            </motion.span>
+          </motion.button>
           
           <Separator orientation="vertical" className="h-6" />
           
