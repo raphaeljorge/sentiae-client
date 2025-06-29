@@ -8,6 +8,7 @@ import {
   MiniMap,
   Panel,
   BackgroundVariant,
+  useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -57,10 +58,12 @@ export function FlowEditor({ workflow }: FlowEditorProps) {
     onConnect: onConnectWorkflow,
     startExecution, 
     workflowExecutionState,
-    initializeWorkflow
+    initializeWorkflow,
+    createNode
   } = useWorkflow();
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(true);
+  const { screenToFlowPosition } = useReactFlow();
 
   // Initialize workflow when it changes
   useEffect(() => {
@@ -84,21 +87,20 @@ export function FlowEditor({ workflow }: FlowEditorProps) {
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
 
-    const reactFlowBounds = (event.target as Element)?.closest('.react-flow')?.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
 
-    if (typeof type === 'undefined' || !type || !reactFlowBounds) {
+    if (typeof type === 'undefined' || !type) {
       return;
     }
 
-    const position = {
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    };
+    // Convert screen coordinates to flow coordinates
+    const position = screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
 
-    // Use the workflow hook's createNode function instead of creating nodes manually
-    const { createNode } = useWorkflow.getState();
-    createNode(type as any, position);
+    // Create the node using the workflow hook's createNode function
+    createNode(type as FlowNode['type'], position);
   };
 
   const onDragStart = (event: DragEvent, nodeType: string) => {
