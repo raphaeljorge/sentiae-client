@@ -99,10 +99,10 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/workspace'
+  fullPaths: '/' | '/dashboard' | '/workspace' | '/editor'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/workspace'
-  id: '__root__' | '/' | '/dashboard' | '/workspace'
+  to: '/' | '/dashboard' | '/workspace' | '/editor'
+  id: '__root__' | '/' | '/dashboard' | '/workspace' | '/editor'
   fileRoutesById: FileRoutesById
 }
 
@@ -110,12 +110,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   WorkspaceRoute: typeof WorkspaceRoute
+  EditorRoute: typeof EditorRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   WorkspaceRoute: WorkspaceRoute,
+  EditorRoute: EditorRoute,
 }
 
 export const routeTree = rootRoute
