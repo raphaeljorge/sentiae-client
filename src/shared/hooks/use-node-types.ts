@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { MOCK_NODE_TYPES } from '@/widgets/flow-editor/data/mockNodeTypes';
-import { NODE_SCHEMA_EXAMPLES } from '@/shared/types/node-schema';
+import { fetchNodeTypes, fetchNodeSchemas } from '@/shared/api/node-types';
 
 export const NODE_TYPES_QUERY_KEYS = {
   all: ['node-types'] as const,
@@ -13,10 +12,7 @@ export const NODE_TYPES_QUERY_KEYS = {
 export function useNodeTypes() {
   return useQuery({
     queryKey: NODE_TYPES_QUERY_KEYS.all,
-    queryFn: async () => {
-      // Return mock data directly instead of making API calls
-      return MOCK_NODE_TYPES;
-    },
+    queryFn: fetchNodeTypes,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -27,10 +23,7 @@ export function useNodeTypes() {
 export function useNodeSchemas() {
   return useQuery({
     queryKey: NODE_TYPES_QUERY_KEYS.schemas,
-    queryFn: async () => {
-      // Return mock data directly instead of making API calls
-      return NODE_SCHEMA_EXAMPLES;
-    },
+    queryFn: fetchNodeSchemas,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
