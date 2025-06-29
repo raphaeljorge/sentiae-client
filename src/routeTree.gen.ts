@@ -79,12 +79,14 @@ interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
+  '/editor': typeof EditorRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
+  '/editor': typeof EditorRoute
 }
 
 export interface FileRoutesById {
