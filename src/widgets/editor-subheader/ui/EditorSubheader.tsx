@@ -1,6 +1,6 @@
 import { Button } from '@/shared/ui/button';
 import { Separator } from '@/shared/ui/separator';
-import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command } from 'lucide-react';
+import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command, PanelLeft } from 'lucide-react';
 import { Badge } from '@/shared/ui/badge';
 import { cn } from '@/shared/lib/utils';
 import { motion, type Variants, type Transition } from 'framer-motion';
@@ -137,7 +137,7 @@ export function EditorSubheader({
           </Button>
           <motion.button
             {...BUTTON_MOTION_CONFIG}
-            onClick={toggleNodePalette}
+            onClick={onTogglePalette}
             className="flex h-8 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-neutral-200/60 dark:bg-neutral-600/80 px-2 py-1.5 text-neutral-600 dark:text-neutral-200 hover:bg-neutral-300/60 dark:hover:bg-neutral-500/80 transition-colors"
             aria-label="Toggle Node Palette"
           >
