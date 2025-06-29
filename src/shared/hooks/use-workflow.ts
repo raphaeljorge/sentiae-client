@@ -1,4 +1,5 @@
 import { createNode } from "@/shared/lib/flow/node-factory";
+import { SSEWorkflowExecutionClient } from "@/shared/lib/flow/sse-workflow-execution-client";
 import {
 	type DynamicHandle,
 	type FlowEdge,
@@ -84,7 +85,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 		timesRun: 0,
 	},
 	initializeWorkflow: (nodes: FlowNode[], edges: FlowEdge[]) => {
-		set({ nodes, edges, workflowExecutionState: { isRunning: false, finishedAt: null, errors: [], timesRun: 0 } });
+		set({ nodes, edges });
 		get().validateWorkflow();
 	},
 	validateWorkflow: () => {
@@ -143,7 +144,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	},
 	onConnect: (connection) => {
 		const newEdge = addEdge({ ...connection, type: "status" }, get().edges);
-		const sourceNode = get().getNodeById(connection.source!);
+		const sourceNode = get().getNodeById(connection.source);
 
 		if (!connection.sourceHandle) {
 			throw new Error("Source handle not found");
@@ -230,7 +231,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 						data: {
 							...node.data,
 							executionState: {
-								...(node.data as any)?.executionState,
+								...node.data?.executionState,
 								...state,
 							},
 						},
@@ -339,7 +340,21 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			}),
 		});
 	},
+	// Runtime
+
 	async startExecution() {
+		// Check if workflow has already run successfully
+		if (get().workflowExecutionState.timesRun > 3) {
+			const message =
+				"Workflow has already run successfully and cannot be run again";
+			console.warn(message);
+			return {
+				status: "error",
+				message,
+				error: new Error(message),
+			};
+		}
+
 		// Reset execution state for all nodes
 		set((state) => ({
 			nodes: state.nodes.map((node) => ({
@@ -349,26 +364,14 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 					executionState: {
 						status: "idle",
 						timestamp: new Date().toISOString(),
-                        sources: (node.data as any).executionState?.sources,
-                        targets: (node.data as any).executionState?.targets,
 					},
 				},
 			})) as FlowNode[],
-            workflowExecutionState: {
-                ...state.workflowExecutionState,
-                isRunning: true,
-            }
 		}));
 
 		const workflow = get().validateWorkflow();
 
 		if (workflow.errors.length > 0) {
-            set((state) => ({
-                workflowExecutionState: {
-                    ...state.workflowExecutionState,
-                    isRunning: false,
-                }
-            }))
 			const message = "Workflow validation failed";
 			return {
 				status: "error",
@@ -378,83 +381,59 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			};
 		}
 
+		// Set execution state to running
+		set((state) => ({
+			workflowExecutionState: {
+				...state.workflowExecutionState,
+				isRunning: true,
+			},
+		}));
+
 		try {
-            for(const nodeId of workflow.executionOrder) {
-                const node = get().getNodeById(nodeId);
-                if(!node) continue;
+			const sseClient = new SSEWorkflowExecutionClient();
+			const { updateNodeExecutionState } = get();
 
-                get().updateNodeExecutionState(nodeId, {
-                    status: "processing",
-                    timestamp: new Date().toISOString()
-                });
-
-                // Simulate async work
-                await new Promise(resolve => setTimeout(resolve, 750));
-                
-                // Simulate output data
-                let sources: Record<string, any> = { result: `Output from ${node.type} node (${node.id})`};
-
-                if(isNodeWithDynamicHandles(node) && isNodeOfType(node, 'generate-text')) {
-                    for (const tool of node.data.dynamicHandles.tools || []) {
-                        sources[tool.id] = `Output for tool ${tool.name}`;
-                    }
-                }
-                
-                get().updateNodeExecutionState(nodeId, {
-                    status: "success",
-                    timestamp: new Date().toISOString(),
-                    sources,
-                });
-
-                // Propagate results to dependents for visualization
-                const dependents = workflow.dependents[nodeId] || [];
-                for(const dependent of dependents) {
-                    const targetNode = get().getNodeById(dependent.node);
-                    if(!targetNode) continue;
-
-                    const newTargets = {...(targetNode.data as any).executionState?.targets};
-                    
-                    const edge = workflow.edges.find(e => e.source === nodeId && e.target === dependent.node && e.targetHandle === dependent.targetHandle);
-
-                    if(edge && edge.sourceHandle && sources[edge.sourceHandle]) {
-                         newTargets[dependent.targetHandle] = sources[edge.sourceHandle];
-                    } else if (sources.result) {
-                        newTargets[dependent.targetHandle] = sources.result;
-                    }
-
-
-                    get().updateNodeExecutionState(dependent.node, {
-                        targets: newTargets,
-                    });
-                }
-            }
-
-            set((state) => ({
-                workflowExecutionState: {
-                    ...state.workflowExecutionState,
-                    isRunning: false,
-                    finishedAt: new Date().toISOString(),
-                    timesRun: state.workflowExecutionState.timesRun + 1,
-                }
-            }));
+			await new Promise((resolve, reject) => {
+				sseClient.connect(workflow, {
+					onNodeUpdate: (nodeId, state) => {
+						updateNodeExecutionState(nodeId, state);
+					},
+					onError: (error) => {
+						console.error("Error in execution:", error);
+						reject(error);
+					},
+					onComplete: ({ timestamp }) => {
+						set((state) => ({
+							workflowExecutionState: {
+								...state.workflowExecutionState,
+								finishedAt: timestamp,
+								timesRun: state.workflowExecutionState.timesRun + 1,
+							},
+						}));
+						resolve(undefined);
+					},
+				});
+			});
 
 			return {
 				status: "success",
-				message: "Workflow executed successfully (simulated)",
+				message: "Workflow executed successfully",
 			};
 		} catch (error) {
-            set((state) => ({
-                workflowExecutionState: {
-                    ...state.workflowExecutionState,
-                    isRunning: false,
-                }
-            }));
 			console.error("Workflow execution failed:", error);
 			return {
 				status: "error",
 				message: "Workflow execution failed",
 				error: error instanceof Error ? error : new Error(String(error)),
 			};
+		} finally {
+			// Reset execution state when done
+			set((state) => ({
+				workflowExecutionState: {
+					...state.workflowExecutionState,
+					isRunning: false,
+				},
+			}));
 		}
 	},
 }));
