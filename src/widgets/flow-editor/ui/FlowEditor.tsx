@@ -14,11 +14,12 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { Button } from '@/shared/ui/button';
-import { Play, Save, Eye, PenLine, Menu, X } from 'lucide-react';
+import { Eye, PenLine } from 'lucide-react';
 import { useWorkflow } from '@/shared/hooks/use-workflow';
 import type { WorkflowResponse } from '@/shared/types/workflow';
 import type { FlowNode, FlowEdge } from '@/shared/lib/flow/workflow';
 import { NodePalette } from './NodePalette';
+import { EditorSubheader } from '@/widgets/editor-subheader';
 
 // Import node controllers
 import { GenerateTextNodeController } from '@/shared/ui/flow/generate-text-node-controller';
@@ -118,97 +119,101 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
     console.log('Saving workflow...', { nodes, edges });
   };
 
+  const formatLastRun = () => {
+    if (!workflowExecutionState.finishedAt) return undefined;
+    
+    const date = new Date(workflowExecutionState.finishedAt);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    return date.toLocaleDateString();
+  };
+
+  const getWorkflowStatus = () => {
+    if (workflowExecutionState.errors.length > 0) return 'error';
+    if (workflowExecutionState.finishedAt) return 'success';
+    return 'idle';
+  };
+
   return (
-    <div className="h-full w-full relative">
-      {/* Node Palette */}
-      <NodePalette 
-        isOpen={isPaletteOpen} 
-        onClose={() => setIsPaletteOpen(false)} 
+    <div className="h-full w-full flex flex-col">
+      {/* Editor Subheader */}
+      <EditorSubheader
+        workflowName={workflow?.name || 'Untitled Workflow'}
+        isRunning={workflowExecutionState.isRunning}
+        lastRun={formatLastRun()}
+        status={getWorkflowStatus()}
+        errorCount={workflowExecutionState.errors.length}
+        isPaletteOpen={isPaletteOpen}
+        onRun={handleRunWorkflow}
+        onSave={handleSaveWorkflow}
+        onTogglePalette={() => setIsPaletteOpen(!isPaletteOpen)}
       />
 
-      {/* Main Flow Editor */}
-      <div className={`h-full transition-all duration-300 ${isPaletteOpen ? 'ml-80' : 'ml-0'}`}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          nodeTypes={nodeTypes}
-          fitView
-        >
-          <Controls />
-          <MiniMap />
-          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-          
-          {/* Toolbar */}
-          <Panel position="top-left" className="flex gap-2">
-            {!isPaletteOpen && (
-              <Button 
-                onClick={() => setIsPaletteOpen(true)}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Menu className="h-4 w-4" />
-                Nodes
-              </Button>
-            )}
-            
-            <Button 
-              onClick={handleRunWorkflow}
-              disabled={workflowExecutionState.isRunning}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Play className="h-4 w-4" />
-              {workflowExecutionState.isRunning ? 'Running...' : 'Run'}
-            </Button>
-            
-            <Button 
-              onClick={handleSaveWorkflow}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
-          </Panel>
+      {/* Main Editor Area */}
+      <div className="flex-1 relative">
+        {/* Node Palette */}
+        <NodePalette 
+          isOpen={isPaletteOpen} 
+          onClose={() => setIsPaletteOpen(false)} 
+        />
 
-          {/* Legacy Node Panel - keeping for backward compatibility */}
-          <Panel position="top-center" className="flex gap-2">
-            {nodeTypesForPanel.map((nodeType) => (
-              <Button
-                key={nodeType.type}
-                variant="outline"
-                size="sm"
-                className="cursor-grab flex items-center gap-2"
-                draggable
-                onDragStart={(e) => onDragStart(e, nodeType.type)}
-              >
-                <nodeType.icon className="h-4 w-4" />
-                {nodeType.label}
-              </Button>
-            ))}
-          </Panel>
-
-          {/* Status Panel */}
-          {workflowExecutionState.errors.length > 0 && (
-            <Panel position="bottom-left" className="bg-destructive/10 border border-destructive rounded p-3">
-              <div className="text-sm font-medium text-destructive mb-2">
-                Workflow Errors ({workflowExecutionState.errors.length})
-              </div>
-              {workflowExecutionState.errors.slice(0, 3).map((error) => (
-                <div key={error.message} className="text-xs text-destructive/80">
-                  {error.message}
-                </div>
+        {/* Main Flow Editor */}
+        <div className={`h-full transition-all duration-300 ${isPaletteOpen ? 'ml-80' : 'ml-0'}`}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
+            fitView
+          >
+            <Controls />
+            <MiniMap />
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+            
+            {/* Legacy Node Panel - keeping for backward compatibility */}
+            <Panel position="top-center" className="flex gap-2">
+              {nodeTypesForPanel.map((nodeType) => (
+                <Button
+                  key={nodeType.type}
+                  variant="outline"
+                  size="sm"
+                  className="cursor-grab flex items-center gap-2"
+                  draggable
+                  onDragStart={(e) => onDragStart(e, nodeType.type)}
+                >
+                  <nodeType.icon className="h-4 w-4" />
+                  {nodeType.label}
+                </Button>
               ))}
             </Panel>
-          )}
-        </ReactFlow>
+
+            {/* Status Panel */}
+            {workflowExecutionState.errors.length > 0 && (
+              <Panel position="bottom-left" className="bg-destructive/10 border border-destructive rounded p-3">
+                <div className="text-sm font-medium text-destructive mb-2">
+                  Workflow Errors ({workflowExecutionState.errors.length})
+                </div>
+                {workflowExecutionState.errors.slice(0, 3).map((error) => (
+                  <div key={error.message} className="text-xs text-destructive/80">
+                    {error.message}
+                  </div>
+                ))}
+              </Panel>
+            )}
+          </ReactFlow>
+        </div>
       </div>
     </div>
   );
