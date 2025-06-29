@@ -30,10 +30,6 @@ export function EditorPage() {
   if (isLoading) {
     return (
       <div className="h-screen w-full p-4">
-        <div className="mb-4">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96 mt-2" />
-        </div>
         <Skeleton className="h-full w-full" />
       </div>
     );
@@ -67,13 +63,9 @@ export function EditorPage() {
 
   return (
     <div className="h-screen w-full flex flex-col">
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{workflow.name}</h1>
-        <p className="text-muted-foreground">{workflow.description}</p>
-      </div>
       <div className="flex-1">
         <FlowEditor workflow={workflow} />
       </div>
     </div>
   );
-} 
+}
