@@ -94,6 +94,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
+  '/editor': typeof EditorRoute
 }
 
 export interface FileRouteTypes {
