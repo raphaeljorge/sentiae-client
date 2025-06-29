@@ -90,7 +90,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	},
 	validateWorkflow: () => {
 		const { nodes, edges } = get();
-		const workflow = prepareWorkflow(nodes, edges);
+		// Use non-strict mode during editing to allow incomplete workflows
+		const workflow = prepareWorkflow(nodes, edges, { strict: false });
 
 		// Reset edge execution states
 		for (const edge of workflow.edges) {
@@ -369,7 +370,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			})) as FlowNode[],
 		}));
 
-		const workflow = get().validateWorkflow();
+		// Use strict validation for execution
+		const workflow = prepareWorkflow(get().nodes, get().edges, { strict: true });
 
 		if (workflow.errors.length > 0) {
 			const message = "Workflow validation failed";

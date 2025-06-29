@@ -320,7 +320,14 @@ function detectCycles(
 function validateRequiredHandles(
 	nodes: FlowNode[],
 	edges: FlowEdge[],
+	options: { strict?: boolean } = {},
 ): MissingConnectionError[] {
+	// In non-strict mode (editing), don't validate required connections
+	// This allows users to add nodes without immediately connecting them
+	if (!options.strict) {
+		return [];
+	}
+
 	const errors: MissingConnectionError[] = [];
 	const connectionsByTarget = new Map<string, FlowEdge[]>();
 	const connectionsBySource = new Map<string, FlowEdge[]>();
@@ -371,6 +378,7 @@ function validateRequiredHandles(
 export function prepareWorkflow(
 	nodes: FlowNode[],
 	edges: FlowEdge[],
+	options: { strict?: boolean } = {},
 ): WorkflowDefinition {
 	const errors: WorkflowError[] = [];
 
@@ -389,8 +397,8 @@ export function prepareWorkflow(
 	const cycleErrors = detectCycles(nodes, dependencies, dependents, edges);
 	errors.push(...cycleErrors);
 
-	// Fourth pass: Validate required handles
-	errors.push(...validateRequiredHandles(nodes, edges));
+	// Fourth pass: Validate required handles (only in strict mode)
+	errors.push(...validateRequiredHandles(nodes, edges, options));
 
 	// Get execution order if no cycles were detected
 	const executionOrder =
