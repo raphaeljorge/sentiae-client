@@ -1,8 +1,8 @@
 import type { FlowNode } from "@/shared/lib/flow/workflow";
-import type { GenerateTextNodeController } from "@/components/flow/generate-text-node-controller";
-import type { PromptCrafterNodeController } from "@/components/flow/prompt-crafter-node-controller";
-import type { TextInputNodeController } from "@/components/flow/text-input-node-controller";
-import type { VisualizeTextNodeController } from "@/components/flow/visualize-text-node-controller";
+import type { GenerateTextNodeController } from "@/shared/ui/flow/generate-text-node-controller";
+import type { PromptCrafterNodeController } from "@/shared/ui/flow/prompt-crafter-node-controller";
+import type { TextInputNodeController } from "@/shared/ui/flow/text-input-node-controller";
+import type { VisualizeTextNodeController } from "@/shared/ui/flow/visualize-text-node-controller";
 import { nanoid } from "nanoid";
 
 export type NodePosition = {

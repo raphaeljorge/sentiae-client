@@ -13,8 +13,44 @@ import {
   Shield,
   Workflow,
   FileText,
-  Settings
+  Settings,
+  ArrowRight,
+  BookOpen,
+  CheckCircle,
+  Search
 } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+
+const workflowExamples = [
+  {
+    id: 'flow-chain',
+    name: 'Chain Workflow',
+    description: 'Step-by-step content creation with quality checks',
+    icon: ArrowRight,
+    color: 'bg-blue-500',
+  },
+  {
+    id: 'flow-routing',
+    name: 'Routing Workflow', 
+    description: 'Content classification and specialist routing',
+    icon: Search,
+    color: 'bg-green-500',
+  },
+  {
+    id: 'flow-parallelization',
+    name: 'Parallelization Workflow',
+    description: 'Parallel exam creation with aggregation',
+    icon: Zap,
+    color: 'bg-yellow-500',
+  },
+  {
+    id: 'flow-orchestrator',
+    name: 'Orchestrator Workflow',
+    description: 'Coordinated development task distribution',
+    icon: Layers,
+    color: 'bg-purple-500',
+  },
+];
 
 export function HomePage() {
   return (
@@ -60,6 +96,42 @@ export function HomePage() {
             </div>
           </div>
   
+          {/* Workflow Examples Section */}
+          <div className="space-y-4 mb-12">
+            <div className="flex items-center gap-2">
+              <Workflow className="h-5 w-5" />
+              <h2 className="text-2xl font-semibold tracking-tight">Workflow Examples</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {workflowExamples.map((workflow) => (
+                <Card key={workflow.id} className="group hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${workflow.color}`} />
+                      <workflow.icon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <CardTitle className="text-lg">{workflow.name}</CardTitle>
+                    <CardDescription className="text-sm">
+                      {workflow.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <Link
+                      to="/editor"
+                      search={{ id: workflow.id }}
+                      className="inline-flex"
+                    >
+                      <Button size="sm" className="w-full group-hover:bg-primary/90">
+                        Open Editor
+                        <ArrowRight className="ml-2 h-3 w-3" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
           {/* Features Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Card>
@@ -191,192 +263,148 @@ export function HomePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-cyan-500 rounded-full" />
-                  <span className="text-sm">React Flow</span>
+                  <span className="text-sm">Syntax Highlighting</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-cyan-500 rounded-full" />
-                  <span className="text-sm">Form Validation</span>
+                  <span className="text-sm">Code Completion</span>
                 </div>
               </CardContent>
             </Card>
           </div>
-  
-          {/* Tabs Section */}
-          <Tabs defaultValue="architecture" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="architecture">Architecture</TabsTrigger>
-              <TabsTrigger value="features">Features</TabsTrigger>
-              <TabsTrigger value="tooling">Tooling</TabsTrigger>
-              <TabsTrigger value="getting-started">Get Started</TabsTrigger>
-            </TabsList>
-  
-            <TabsContent value="architecture" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Layers className="h-5 w-5" />
-                    Feature-Sliced Design
-                  </CardTitle>
-                  <CardDescription>
-                    Organized code structure following FSD principles
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">Layers</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• app - Application configuration</li>
-                        <li>• pages - Route components</li>
-                        <li>• widgets - Complex UI blocks</li>
-                        <li>• features - Business logic</li>
-                        <li>• entities - Domain models</li>
-                        <li>• shared - Reusable utilities</li>
-                      </ul>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">Benefits</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• Clear separation of concerns</li>
-                        <li>• Predictable import rules</li>
-                        <li>• Scalable architecture</li>
-                        <li>• Team collaboration</li>
-                        <li>• Maintainable codebase</li>
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-  
-            <TabsContent value="features" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Getting Started */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Getting Started</h2>
+            
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="development">Development</TabsTrigger>
+                <TabsTrigger value="architecture">Architecture</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="space-y-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Workflow className="h-5 w-5" />
-                      Visual Editing
-                    </CardTitle>
+                    <CardTitle>Project Overview</CardTitle>
+                    <CardDescription>
+                      This project demonstrates modern React development with Feature-Sliced Design
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Integrated Monaco Editor and React Flow for advanced editing capabilities.
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                        <span className="text-sm">Code editing with syntax highlighting</span>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Key Features</h4>
+                        <ul className="space-y-1 text-sm text-muted-foreground">
+                          <li>• File-based routing with TanStack Router</li>
+                          <li>• Server state management with TanStack Query</li>
+                          <li>• Component composition patterns</li>
+                          <li>• Type-safe development with TypeScript</li>
+                        </ul>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                        <span className="text-sm">Visual flow diagrams</span>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Development Tools</h4>
+                        <ul className="space-y-1 text-sm text-muted-foreground">
+                          <li>• Vite for fast development builds</li>
+                          <li>• Biome for code formatting and linting</li>
+                          <li>• Vitest for unit testing</li>
+                          <li>• Husky for git hooks</li>
+                        </ul>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-  
+              </TabsContent>
+              
+              <TabsContent value="development" className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Code2 className="h-4 w-4" />
+                        Quick Start
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Install dependencies:</p>
+                        <code className="block p-2 bg-muted rounded text-sm">npm install</code>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Start development server:</p>
+                        <code className="block p-2 bg-muted rounded text-sm">npm run dev</code>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Settings className="h-4 w-4" />
+                        Available Scripts
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between">
+                          <code>npm run build</code>
+                          <span className="text-muted-foreground">Production build</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <code>npm run lint</code>
+                          <span className="text-muted-foreground">Run linter</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <code>npm run test</code>
+                          <span className="text-muted-foreground">Run tests</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="architecture" className="space-y-4">
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Form Management
+                      <FileText className="h-4 w-4" />
+                      Feature-Sliced Design
                     </CardTitle>
+                    <CardDescription>
+                      Modular architecture for scalable React applications
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Powerful form handling with validation and type safety.
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full" />
-                        <span className="text-sm">TanStack Form integration</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full" />
-                        <span className="text-sm">Zod schema validation</span>
+                    <div className="space-y-4">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <h4 className="font-medium">Layers</h4>
+                          <ul className="space-y-1 text-sm text-muted-foreground">
+                            <li>• <strong>shared</strong> - Reusable utilities</li>
+                            <li>• <strong>entities</strong> - Business entities</li>
+                            <li>• <strong>features</strong> - User features</li>
+                            <li>• <strong>widgets</strong> - UI compositions</li>
+                            <li>• <strong>pages</strong> - Application pages</li>
+                          </ul>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-medium">Slices</h4>
+                          <ul className="space-y-1 text-sm text-muted-foreground">
+                            <li>• <strong>api</strong> - External integrations</li>
+                            <li>• <strong>ui</strong> - User interface</li>
+                            <li>• <strong>model</strong> - Business logic</li>
+                            <li>• <strong>lib</strong> - Internal utilities</li>
+                            <li>• <strong>config</strong> - Configuration</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </TabsContent>
-  
-            <TabsContent value="tooling" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Development Tooling
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-sm">Code Quality</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• Biomejs linting</li>
-                        <li>• TypeScript strict mode</li>
-                        <li>• ESLint integration</li>
-                      </ul>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-sm">Testing</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• Vitest test runner</li>
-                        <li>• Test UI interface</li>
-                        <li>• Coverage reporting</li>
-                      </ul>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-sm">Git Hooks</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• Husky pre-commit</li>
-                        <li>• Lint staged files</li>
-                        <li>• Type checking</li>
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-  
-            <TabsContent value="getting-started" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Start</CardTitle>
-                  <CardDescription>
-                    Get up and running with your new application
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Development Commands</h4>
-                    <div className="bg-muted p-3 rounded-md font-mono text-sm space-y-1">
-                      <div>npm run dev      # Start development server</div>
-                      <div>npm run build    # Build for production</div>
-                      <div>npm run lint     # Run linting</div>
-                      <div>npm run test     # Run tests</div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Next Steps</h4>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li>• Explore the folder structure</li>
-                      <li>• Add your first feature</li>
-                      <li>• Configure additional routes</li>
-                      <li>• Set up your data layer</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-  
-          {/* Call to Action */}
-          <div className="text-center mt-12">
-            <Button size="lg" className="bg-gradient-to-r from-primary to-blue-600 hover:opacity-90">
-              Start Building
-            </Button>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

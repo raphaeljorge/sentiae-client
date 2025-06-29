@@ -1,5 +1,5 @@
-import { cn } from "@/flow/lib/utils";
-import { BaseNode } from "@/components/flow/base-node";
+import { cn } from "@/shared/lib/utils";
+import { BaseNode } from "@/shared/ui/flow/base-node";
 import { NodeResizer } from "@xyflow/react";
 import React from "react";
 

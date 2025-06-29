@@ -1,7 +1,7 @@
 "use client";
 
 import type { EdgeExecutionState } from "@/shared/lib/flow/workflow-execution-engine";
-import { StatusEdge } from "@/components/flow/status-edge";
+import { StatusEdge } from "@/shared/ui/flow/status-edge";
 import type { EdgeProps } from "@xyflow/react";
 
 export type StatusEdgeController = Omit<StatusEdge, "data"> & {

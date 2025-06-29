@@ -1,4 +1,4 @@
-import { cn } from "@/flow/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { marked } from "marked";
 import type * as React from "react";
 import { Suspense, isValidElement, memo, useMemo } from "react";
@@ -282,13 +282,14 @@ interface MarkdownBlockProps {
 const MemoizedMarkdownBlock = memo(
 	({ content, className }: MarkdownBlockProps) => {
 		return (
-			<ReactMarkdown
-				remarkPlugins={[remarkGfm]}
-				components={components}
-				className={className}
-			>
-				{content}
-			</ReactMarkdown>
+			<div className={className}>
+				<ReactMarkdown
+					remarkPlugins={[remarkGfm]}
+					components={components}
+				>
+					{content}
+				</ReactMarkdown>
+			</div>
 		);
 	},
 	(prevProps, nextProps) => {

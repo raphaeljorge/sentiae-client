@@ -1,4 +1,4 @@
-import { cn } from "@/flow/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 import { Badge } from "@/shared/ui/badge";
 

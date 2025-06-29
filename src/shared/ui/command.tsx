@@ -1,7 +1,7 @@
 import * as React from "react"
 import { type DialogProps } from "@radix-ui/react-dialog"
 import { Command as CommandPrimitive } from "cmdk"
-import { cn } from "@/flow/lib/utils"
+import { cn } from "@/shared/lib/utils"
 import { Dialog, DialogContent } from "@/shared/ui/dialog"
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons"
 

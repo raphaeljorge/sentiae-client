@@ -8,8 +8,8 @@ import {
 	PopoverTrigger,
 } from "@/shared/ui/popover";
 import { Textarea } from "@/shared/ui/textarea";
-import { cn } from "@/flow/lib/utils";
-import { BaseHandle } from "@/components/flow/base-handle";
+import { cn } from "@/shared/lib/utils";
+import { BaseHandle } from "@/shared/ui/flow/base-handle";
 import type { HandleProps, Node } from "@xyflow/react";
 import { useOnSelectionChange } from "@xyflow/react";
 import { Edit2, Trash } from "lucide-react";

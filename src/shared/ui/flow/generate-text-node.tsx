@@ -8,21 +8,21 @@ import {
 import { Button } from "@/shared/ui/button";
 
 import { Separator } from "@/shared/ui/separator";
-import { cn } from "@/flow/lib/utils";
-import { BaseNode } from "@/components/flow/base-node";
+import { cn } from "@/shared/lib/utils";
+import { BaseNode } from "@/shared/ui/flow/base-node";
 import {
 	EditableHandle,
 	EditableHandleDialog,
-} from "@/components/flow/editable-handle";
-import { LabeledHandle } from "@/components/flow/labeled-handle";
+} from "@/shared/ui/flow/editable-handle";
+import { LabeledHandle } from "@/shared/ui/flow/labeled-handle";
 import {
 	NodeHeader,
 	NodeHeaderAction,
 	NodeHeaderActions,
 	NodeHeaderIcon,
 	NodeHeaderTitle,
-} from "@/components/flow/node-header";
-import { NodeHeaderStatus } from "@/components/flow/node-header-status";
+} from "@/shared/ui/flow/node-header";
+import { NodeHeaderStatus } from "@/shared/ui/flow/node-header-status";
 import { type Model, ModelSelector } from "@/shared/ui/model-selector";
 import { Bot, Trash } from "lucide-react";
 import { useCallback } from "react";

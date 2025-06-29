@@ -2,7 +2,7 @@
 
 import { useWorkflow } from "@/shared/hooks/use-workflow";
 import type { NodeExecutionState } from "@/shared/lib/flow/workflow-execution-engine";
-import { VisualizeTextNode } from "@/components/flow/visualize-text-node";
+import { VisualizeTextNode } from "@/shared/ui/flow/visualize-text-node";
 import type { NodeProps } from "@xyflow/react";
 import { useCallback } from "react";
 

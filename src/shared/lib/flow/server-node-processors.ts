@@ -1,9 +1,9 @@
 import { generateAIText } from "@/shared/lib/flow/generate-ai-text";
 import type { FlowNode } from "@/shared/lib/flow/workflow";
 import type { NodeProcessor } from "@/shared/lib/flow/workflow-execution-engine";
-import type { GenerateTextNode } from "@/components/flow/generate-text-node";
-import type { PromptCrafterNode } from "@/components/flow/prompt-crafter-node";
-import type { TextInputNode } from "@/components/flow/text-input-node";
+import type { GenerateTextNode } from "@/shared/ui/flow/generate-text-node";
+import type { PromptCrafterNode } from "@/shared/ui/flow/prompt-crafter-node";
+import type { TextInputNode } from "@/shared/ui/flow/text-input-node";
 
 export const serverNodeProcessors: Record<FlowNode["type"], NodeProcessor> = {
 	"text-input": async (node) => {

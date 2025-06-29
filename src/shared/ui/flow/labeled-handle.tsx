@@ -1,10 +1,10 @@
 "use client";
 
-import { cn } from "@/flow/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { HandleProps } from "@xyflow/react";
 import React from "react";
 
-import { BaseHandle } from "@/components/flow/base-handle";
+import { BaseHandle } from "@/shared/ui/flow/base-handle";
 
 const flexDirections = {
 	top: "flex-col",

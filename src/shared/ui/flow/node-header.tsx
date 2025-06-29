@@ -6,7 +6,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { cn } from "@/flow/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { EllipsisVertical } from "lucide-react";
 

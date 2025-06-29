@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { ThemeProvider } from '@/shared/providers/theme-provider';
 import { LayoutWrapper } from '@/widgets/layout-wrapper';
 import { Toaster } from '@/shared/ui/toaster';
