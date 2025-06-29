@@ -1,9 +1,10 @@
 import { Button } from '@/shared/ui/button';
 import { Separator } from '@/shared/ui/separator';
-import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command, PanelLeft } from 'lucide-react';
+import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command, PanelLeft, Database } from 'lucide-react';
 import { Badge } from '@/shared/ui/badge';
 import { cn } from '@/shared/lib/utils';
 import { motion, type Variants, type Transition } from 'framer-motion';
+import { ApiNodeDialog } from '@/widgets/flow-editor/ui/ApiNodeDialog';
 
 interface EditorSubheaderProps {
   workflowName?: string;
@@ -141,6 +142,8 @@ export function EditorSubheader({
               Node Palette
             </motion.span>
           </motion.button>
+          
+          <ApiNodeDialog />
           
           <Separator orientation="vertical" className="h-6" />
           

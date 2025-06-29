@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { TooltipProvider } from '@/shared/ui/tooltip';
 import { LayoutGroup } from 'motion/react';
-import { MOCK_NODE_TYPES } from '../data/mockNodeTypes';
 import { PaletteHeader } from './PaletteHeader';
 import { FavoritesSection } from './FavoritesSection';
 import { CategorySection } from './CategorySection';
 import { EmptyState } from './EmptyState';
 import { NodeSchemaExamples } from './NodeSchemaExamples';
+import { useNodeTypes } from '@/shared/hooks/use-node-types';
+import { Skeleton } from '@/shared/ui/skeleton';
 import type { NodeType, NodeCategory } from '@/shared/types/node';
 import type { Transition } from 'motion/react';
 
@@ -29,6 +30,9 @@ export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
   const [favoriteNodes, setFavoriteNodes] = useState<Set<string>>(new Set(['http-request', 'if-condition', 'json-node']));
   const [togglingGroup, setTogglingGroup] = useState<'favorites' | 'regular' | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Fetch node types from API
+  const { data: nodeTypes, isLoading, error } = useNodeTypes();
 
   // Add initialization delay to ensure proper rendering
   useEffect(() => {
@@ -40,11 +44,11 @@ export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
   }, []);
 
   // Filter nodes based on search query
-  const filteredNodes = MOCK_NODE_TYPES.filter((node) => {
+  const filteredNodes = nodeTypes?.filter((node) => {
     const matchesSearch = node.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
-  });
+  }) || [];
 
   // Get favorites (nodes that are favorited)
   const favorites = filteredNodes.filter(node => favoriteNodes.has(node.id));
@@ -88,14 +92,55 @@ export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
 
   if (!isOpen) return null;
 
-  // Show loading state while initializing
-  if (!isInitialized) {
+  // Show loading state
+  if (isLoading || !isInitialized) {
     return (
       <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background border-r border-border shadow-lg">
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-            <p className="text-xs text-muted-foreground">Loading palette...</p>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Node Palette</h2>
+          <button 
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            ×
+          </button>
+        </div>
+        <div className="p-4 space-y-4">
+          <Skeleton className="h-8 w-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background border-r border-border shadow-lg">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Node Palette</h2>
+          <button 
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            ×
+          </button>
+        </div>
+        <div className="p-4">
+          <div className="p-4 text-center text-destructive">
+            <p>Failed to load node types</p>
+            <p className="text-xs mt-2">
+              {error instanceof Error ? error.message : 'Unknown error'}
+            </p>
           </div>
         </div>
       </div>

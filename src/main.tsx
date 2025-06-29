@@ -8,8 +8,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { routeTree } from './routeTree.gen';
 import './index.css';
 
-// MSW disabled due to cookie parsing conflicts with dev server
-// Using simple mock data approach instead
+// Import MSW for API mocking
+import { worker } from './mocks/browser';
+
+// Initialize MSW
+if (process.env.NODE_ENV === 'development') {
+  worker.start({
+    onUnhandledRequest: 'bypass',
+  });
+}
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -24,7 +31,7 @@ declare module '@tanstack/react-router' {
 // Create a client
 const queryClient = new QueryClient();
 
-// Initialize app without MSW
+// Initialize app
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
