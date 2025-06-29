@@ -60,6 +60,8 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.446.0",
     "motion": "^12.19.2",
+    "msw": "^2.10.2",
+    "nanoid": "^5.1.5",
     "react": "^19.1.0",
     "react-day-picker": "^9.7.0",
     "react-dom": "^19.1.0",

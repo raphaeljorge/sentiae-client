@@ -35,6 +35,9 @@
       "style": {
         "noUnusedTemplateLiteral": "warn",
         "useImportType": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   },
