@@ -1,8 +1,9 @@
 import { Button } from '@/shared/ui/button';
 import { Separator } from '@/shared/ui/separator';
-import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Play } from 'lucide-react';
+import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command } from 'lucide-react';
 import { Badge } from '@/shared/ui/badge';
 import { cn } from '@/shared/lib/utils';
+import { motion } from 'framer-motion';
 
 interface EditorSubheaderProps {
   workflowName?: string;
@@ -129,6 +130,7 @@ export function EditorSubheader({
             <Play className="h-4 w-4" />
             {isRunning ? 'Running...' : 'Run'}
           </Button>
+          
           <motion.button
             whileTap={{ scale: 0.975 }}
             onClick={onRun}
