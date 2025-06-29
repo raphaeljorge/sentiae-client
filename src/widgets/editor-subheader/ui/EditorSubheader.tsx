@@ -3,7 +3,7 @@ import { Separator } from '@/shared/ui/separator';
 import { Play, Save, Menu, X, Workflow, Clock, CheckCircle, AlertCircle, Square, Command } from 'lucide-react';
 import { Badge } from '@/shared/ui/badge';
 import { cn } from '@/shared/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, type Variants, type Transition } from 'framer-motion';
 
 interface EditorSubheaderProps {
   workflowName?: string;
