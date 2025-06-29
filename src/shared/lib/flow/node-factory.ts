@@ -1,5 +1,6 @@
 import type { FlowNode } from "@/shared/lib/flow/workflow";
 import type { GenerateTextNodeController } from "@/shared/ui/flow/generate-text-node-controller";
+import type { JsonNodeController } from "@/shared/ui/flow/json-node-controller";
 import type { PromptCrafterNodeController } from "@/shared/ui/flow/prompt-crafter-node-controller";
 import type { TextInputNodeController } from "@/shared/ui/flow/text-input-node-controller";
 import type { VisualizeTextNodeController } from "@/shared/ui/flow/visualize-text-node-controller";
@@ -59,6 +60,19 @@ export const nodeFactory = {
 		},
 		width: 350,
 		height: 300,
+	}),
+
+	"json-node": (position: NodePosition): JsonNodeController => ({
+		id: nanoid(),
+		type: "json-node",
+		position,
+		data: {
+			config: {
+				json: "{\n  \"type\": \"text-input\",\n  \"position\": {\n    \"x\": 100,\n    \"y\": 100\n  },\n  \"data\": {\n    \"config\": {\n      \"value\": \"Hello World\"\n    }\n  }\n}",
+			},
+		},
+		width: 350,
+		height: 400,
 	}),
 };
 

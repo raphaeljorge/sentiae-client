@@ -4,6 +4,7 @@ import type { NodeProcessor } from "@/shared/lib/flow/workflow-execution-engine"
 import type { GenerateTextNode } from "@/shared/ui/flow/generate-text-node";
 import type { PromptCrafterNode } from "@/shared/ui/flow/prompt-crafter-node";
 import type { TextInputNode } from "@/shared/ui/flow/text-input-node";
+import type { JsonNode } from "@/shared/ui/flow/json-node";
 
 export const serverNodeProcessors: Record<FlowNode["type"], NodeProcessor> = {
 	"text-input": async (node) => {
@@ -57,5 +58,22 @@ export const serverNodeProcessors: Record<FlowNode["type"], NodeProcessor> = {
 
 	"visualize-text": async () => {
 		return undefined;
+	},
+
+	"json-node": async (node, targetsData) => {
+		const jsonNode = node as JsonNode;
+		const input = targetsData?.input;
+		
+		try {
+			// Parse the JSON to validate it
+			const jsonData = JSON.parse(jsonNode.data.config.json);
+			
+			// Return the parsed JSON as the result
+			return {
+				result: JSON.stringify(jsonData, null, 2),
+			};
+		} catch (error) {
+			throw new Error(`Invalid JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		}
 	},
 };

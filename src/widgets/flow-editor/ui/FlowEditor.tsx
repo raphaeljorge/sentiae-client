@@ -26,26 +26,20 @@ import { GenerateTextNodeController } from '@/shared/ui/flow/generate-text-node-
 import { PromptCrafterNodeController } from '@/shared/ui/flow/prompt-crafter-node-controller';
 import { TextInputNodeController } from '@/shared/ui/flow/text-input-node-controller';
 import { VisualizeTextNodeController } from '@/shared/ui/flow/visualize-text-node-controller';
+import { JsonNodeController } from '@/shared/ui/flow/json-node-controller';
+import { StatusEdgeController } from '@/shared/ui/flow/status-edge-controller';
 
 const nodeTypes = {
   'generate-text': GenerateTextNodeController,
   'prompt-crafter': PromptCrafterNodeController,
   'text-input': TextInputNodeController,
   'visualize-text': VisualizeTextNodeController,
+  'json-node': JsonNodeController,
 };
 
-const nodeTypesForPanel = [
-  {
-    type: 'visualize-text',
-    label: 'Visualize Text',
-    icon: Eye,
-  },
-  {
-    type: 'text-input',
-    label: 'Text Input',
-    icon: PenLine,
-  },
-];
+const edgeTypes = {
+  'status': StatusEdgeController,
+};
 
 interface FlowEditorProps {
   workflow: WorkflowResponse;
@@ -103,11 +97,6 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
 
     // Create the node using the workflow hook's createNode function
     createNode(type as FlowNode['type'], position);
-  };
-
-  const onDragStart = (event: DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
   };
 
   const handleRunWorkflow = () => {
@@ -177,6 +166,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
             onDrop={onDrop}
             onDragOver={onDragOver}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             fitView
           >
             <Controls />

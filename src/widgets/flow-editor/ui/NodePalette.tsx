@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { TooltipProvider } from '@/shared/ui/tooltip';
 import { LayoutGroup } from 'motion/react';
 import { MOCK_NODE_TYPES } from '../data/mockNodeTypes';
-import { CollapsedPalette } from './CollapsedPalette';
 import { PaletteHeader } from './PaletteHeader';
 import { FavoritesSection } from './FavoritesSection';
 import { CategorySection } from './CategorySection';
 import { EmptyState } from './EmptyState';
+import { NodeSchemaExamples } from './NodeSchemaExamples';
 import type { NodeType, NodeCategory } from '@/shared/types/node';
 import type { Transition } from 'motion/react';
 
@@ -26,7 +26,7 @@ interface NodePaletteProps {
 export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [openAccordions, setOpenAccordions] = useState<string[]>(['favorites', 'core']);
-  const [favoriteNodes, setFavoriteNodes] = useState<Set<string>>(new Set(['http-request', 'if-condition']));
+  const [favoriteNodes, setFavoriteNodes] = useState<Set<string>>(new Set(['http-request', 'if-condition', 'json-node']));
   const [togglingGroup, setTogglingGroup] = useState<'favorites' | 'regular' | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -151,6 +151,11 @@ export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
               )}
             </LayoutGroup>
           </div>
+        </div>
+
+        {/* Node Schema Examples */}
+        <div className="border-t border-border p-4">
+          <NodeSchemaExamples />
         </div>
       </div>
     </TooltipProvider>

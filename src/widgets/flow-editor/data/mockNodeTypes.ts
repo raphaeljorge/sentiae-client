@@ -26,6 +26,12 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     category: 'ai',
   },
   {
+    id: 'json-node',
+    name: 'JSON Node Builder',
+    description: 'Create nodes from JSON definitions',
+    category: 'core',
+  },
+  {
     id: 'http-request',
     name: 'HTTP Request',
     description: 'Make HTTP requests to external APIs',
