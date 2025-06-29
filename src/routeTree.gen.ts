@@ -9,7 +9,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as WorkspaceImport } from './routes/workspace'
 import { Route as DashboardImport } from './routes/dashboard'
-import { Route as EditorImport } from './routes/editor'
 import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
@@ -29,12 +28,6 @@ const IndexRoute = IndexImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EditorRoute = EditorImport.update({
-  id: '/editor',
-  path: '/editor',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -63,13 +56,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceImport
       parentRoute: typeof rootRoute
     }
-    '/editor': {
-      id: '/editor'
-      path: '/editor'
-      fullPath: '/editor'
-      preLoaderRoute: typeof EditorImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -79,14 +65,12 @@ interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
-  '/editor': typeof EditorRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
-  '/editor': typeof EditorRoute
 }
 
 export interface FileRoutesById {
@@ -94,15 +78,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/workspace': typeof WorkspaceRoute
-  '/editor': typeof EditorRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/workspace' | '/editor'
+  fullPaths: '/' | '/dashboard' | '/workspace'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/workspace' | '/editor'
-  id: '__root__' | '/' | '/dashboard' | '/workspace' | '/editor'
+  to: '/' | '/dashboard' | '/workspace'
+  id: '__root__' | '/' | '/dashboard' | '/workspace'
   fileRoutesById: FileRoutesById
 }
 
@@ -110,14 +93,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   WorkspaceRoute: typeof WorkspaceRoute
-  EditorRoute: typeof EditorRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   WorkspaceRoute: WorkspaceRoute,
-  EditorRoute: EditorRoute,
 }
 
 export const routeTree = rootRoute
