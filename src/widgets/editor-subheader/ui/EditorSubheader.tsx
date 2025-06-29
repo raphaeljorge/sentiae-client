@@ -154,16 +154,6 @@ export function EditorSubheader({
             Save
           </Button>
           
-          <Button
-            size="sm"
-            onClick={onRun}
-            disabled={isRunning}
-            className="flex items-center gap-2"
-          >
-            <Play className="h-4 w-4" />
-            {isRunning ? 'Running...' : 'Run'}
-          </Button>
-          
           <motion.button
             whileTap={{ scale: 0.975 }}
             onClick={onRun}
