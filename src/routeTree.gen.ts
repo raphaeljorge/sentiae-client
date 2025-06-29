@@ -8,8 +8,9 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as WorkspaceImport } from './routes/workspace'
-import { Route as IndexImport } from './routes/index'
 import { Route as DashboardImport } from './routes/dashboard'
+import { Route as EditorImport } from './routes/editor'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
@@ -28,6 +29,12 @@ const IndexRoute = IndexImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EditorRoute = EditorImport.update({
+  id: '/editor',
+  path: '/editor',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -54,6 +61,13 @@ declare module '@tanstack/react-router' {
       path: '/workspace'
       fullPath: '/workspace'
       preLoaderRoute: typeof WorkspaceImport
+      parentRoute: typeof rootRoute
+    }
+    '/editor': {
+      id: '/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof EditorImport
       parentRoute: typeof rootRoute
     }
   }
