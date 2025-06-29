@@ -1,92 +1,22 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Search, Star, Bot, PenLine, Eye, FileText, Zap, Database, Code, Workflow } from 'lucide-react';
-import { Input } from '@/shared/ui/input';
-import { Button } from '@/shared/ui/button';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/accordion';
-import { Badge } from '@/shared/ui/badge';
-import { PinList } from '@/shared/ui/pin-list';
-import { cn } from '@/shared/lib/utils';
+import { useState, useEffect } from 'react';
+import { TooltipProvider } from '@/shared/ui/tooltip';
+import { LayoutGroup } from 'motion/react';
+import { MOCK_NODE_TYPES } from '../data/mockNodeTypes';
+import { CollapsedPalette } from './CollapsedPalette';
+import { PaletteHeader } from './PaletteHeader';
+import { FavoritesSection } from './FavoritesSection';
+import { CategorySection } from './CategorySection';
+import { EmptyState } from './EmptyState';
+import type { NodeType, NodeCategory } from '@/shared/types/node';
+import type { Transition } from 'motion/react';
 
-interface NodeType {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  category: string;
-  isFavorite?: boolean;
-}
-
-const nodeTypes: NodeType[] = [
-  {
-    id: 'text-input',
-    name: 'Text Input',
-    description: 'Input text data into the workflow',
-    icon: PenLine,
-    category: 'Input/Output',
-  },
-  {
-    id: 'visualize-text',
-    name: 'Visualize Text',
-    description: 'Display and visualize text content',
-    icon: Eye,
-    category: 'Input/Output',
-  },
-  {
-    id: 'generate-text',
-    name: 'Generate Text',
-    description: 'Generate text using AI models',
-    icon: Bot,
-    category: 'AI & ML',
-    isFavorite: true,
-  },
-  {
-    id: 'prompt-crafter',
-    name: 'Prompt Crafter',
-    description: 'Create dynamic prompts with templates',
-    icon: FileText,
-    category: 'AI & ML',
-    isFavorite: true,
-  },
-  // Additional node types for demonstration
-  {
-    id: 'http-request',
-    name: 'HTTP Request',
-    description: 'Make HTTP requests to external APIs',
-    icon: Zap,
-    category: 'Integration',
-  },
-  {
-    id: 'database-query',
-    name: 'Database Query',
-    description: 'Query databases and retrieve data',
-    icon: Database,
-    category: 'Database',
-  },
-  {
-    id: 'code-executor',
-    name: 'Code Executor',
-    description: 'Execute custom code snippets',
-    icon: Code,
-    category: 'Logic',
-  },
-  {
-    id: 'workflow-trigger',
-    name: 'Workflow Trigger',
-    description: 'Trigger other workflows',
-    icon: Workflow,
-    category: 'Logic',
-  },
-];
-
-const categories = [
-  { name: 'Favorites', icon: Star, count: nodeTypes.filter(n => n.isFavorite).length, color: 'bg-yellow-500/10 text-yellow-600 border-yellow-200' },
-  { name: 'Input/Output', icon: PenLine, count: nodeTypes.filter(n => n.category === 'Input/Output').length, color: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-  { name: 'AI & ML', icon: Bot, count: nodeTypes.filter(n => n.category === 'AI & ML').length, color: 'bg-purple-500/10 text-purple-600 border-purple-200' },
-  { name: 'Logic', icon: Code, count: nodeTypes.filter(n => n.category === 'Logic').length, color: 'bg-green-500/10 text-green-600 border-green-200' },
-  { name: 'Database', icon: Database, count: nodeTypes.filter(n => n.category === 'Database').length, color: 'bg-orange-500/10 text-orange-600 border-orange-200' },
-  { name: 'Integration', icon: Zap, count: nodeTypes.filter(n => n.category === 'Integration').length, color: 'bg-pink-500/10 text-pink-600 border-pink-200' },
-];
+// Animation configuration
+const TRANSITION: Transition = {
+  stiffness: 320,
+  damping: 20,
+  mass: 0.8,
+  type: 'spring'
+};
 
 interface NodePaletteProps {
   isOpen: boolean;
@@ -95,157 +25,134 @@ interface NodePaletteProps {
 
 export function NodePalette({ isOpen, onClose }: NodePaletteProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [favorites, setFavorites] = useState<Set<string>>(
-    new Set(nodeTypes.filter(n => n.isFavorite).map(n => n.id))
-  );
+  const [openAccordions, setOpenAccordions] = useState<string[]>(['favorites', 'core']);
+  const [favoriteNodes, setFavoriteNodes] = useState<Set<string>>(new Set(['http-request', 'if-condition']));
+  const [togglingGroup, setTogglingGroup] = useState<'favorites' | 'regular' | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const filteredNodes = nodeTypes.filter(node =>
-    node.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    node.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    node.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Add initialization delay to ensure proper rendering
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 50);
 
-  const getNodesByCategory = (categoryName: string) => {
-    if (categoryName === 'Favorites') {
-      return filteredNodes.filter(node => favorites.has(node.id));
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Filter nodes based on search query
+  const filteredNodes = MOCK_NODE_TYPES.filter((node) => {
+    const matchesSearch = node.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
+  // Get favorites (nodes that are favorited)
+  const favorites = filteredNodes.filter(node => favoriteNodes.has(node.id));
+
+  // Group ALL filtered nodes by category (including favorited ones)
+  const nodesByCategory = filteredNodes.reduce((acc, node) => {
+    if (!acc[node.category]) {
+      acc[node.category] = [];
     }
-    return filteredNodes.filter(node => node.category === categoryName);
-  };
+    acc[node.category].push(node);
+    return acc;
+  }, {} as Record<NodeCategory, NodeType[]>);
 
-  const toggleFavorite = (nodeId: string) => {
-    setFavorites(prev => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(nodeId)) {
-        newFavorites.delete(nodeId);
-      } else {
-        newFavorites.add(nodeId);
-      }
-      return newFavorites;
-    });
-  };
+  // Get categories that have nodes (for search filtering)
+  const categoriesWithNodes = Object.keys(nodesByCategory) as NodeCategory[];
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
+  const handleDragStart = (event: React.DragEvent, nodeType: NodeType) => {
+    event.dataTransfer.setData('application/reactflow', nodeType.id);
     event.dataTransfer.effectAllowed = 'move';
+  };
+
+  const toggleFavorite = (nodeId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent drag start
+
+    const isFavorited = favoriteNodes.has(nodeId);
+    setTogglingGroup(isFavorited ? 'favorites' : 'regular');
+
+    setFavoriteNodes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(nodeId)) {
+        newSet.delete(nodeId);
+      } else {
+        newSet.add(nodeId);
+      }
+      return newSet;
+    });
+
+    // Reset group z-index after animation
+    setTimeout(() => setTogglingGroup(null), 500);
   };
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background border-r border-border shadow-lg">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h2 className="text-lg font-semibold">Node Palette</h2>
-        <Button variant="ghost" size="sm" onClick={onClose}>
-          ×
-        </Button>
-      </div>
-
-      {/* Search */}
-      <div className="p-4 border-b border-border">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search nodes, categories, or features..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+  // Show loading state while initializing
+  if (!isInitialized) {
+    return (
+      <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background border-r border-border shadow-lg">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+            <p className="text-xs text-muted-foreground">Loading palette...</p>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Categories */}
-      <div className="flex-1 overflow-auto p-4">
-        <Accordion type="multiple" defaultValue={['Favorites', 'AI & ML', 'Input/Output']} className="w-full">
-          {categories.map((category) => {
-            const categoryNodes = getNodesByCategory(category.name);
-            if (categoryNodes.length === 0 && searchQuery) return null;
+  return (
+    <TooltipProvider delayDuration={300}>
+      <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background border-r border-border shadow-lg flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Node Palette</h2>
+          <button 
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            ×
+          </button>
+        </div>
 
-            return (
-              <AccordionItem key={category.name} value={category.name}>
-                <AccordionTrigger className={cn(
-                  "hover:no-underline rounded-lg border px-3 py-2 mb-2",
-                  category.color
-                )}>
-                  <div className="flex items-center gap-2">
-                    <category.icon className="h-4 w-4" />
-                    <span>{category.name}</span>
-                    <Badge variant="secondary" className="ml-auto">
-                      {categoryNodes.length}
-                    </Badge>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-2">
-                  <PinList className="space-y-2">
-                    {categoryNodes.map((node) => (
-                      <div
-                        key={node.id}
-                        className={cn(
-                          "group relative p-3 rounded-lg border cursor-grab transition-all duration-200",
-                          "hover:shadow-md hover:scale-[1.02] hover:border-primary/20",
-                          category.color.replace('/10', '/5').replace('text-', 'hover:text-'),
-                          "bg-card hover:bg-accent/30"
-                        )}
-                        draggable
-                        onDragStart={(e) => onDragStart(e, node.id)}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={cn(
-                            "flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center transition-colors",
-                            category.color.replace('/10', '/20')
-                          )}>
-                            <node.icon className="h-4 w-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-medium truncate">{node.name}</h4>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={cn(
-                                  "h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity",
-                                  favorites.has(node.id) && "opacity-100"
-                                )}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(node.id);
-                                }}
-                              >
-                                <Star 
-                                  className={cn(
-                                    "h-3 w-3",
-                                    favorites.has(node.id) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
-                                  )} 
-                                />
-                              </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                              {node.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </PinList>
-                  {categoryNodes.length === 0 && (
-                    <div className="text-center py-4 text-sm text-muted-foreground">
-                      No nodes found in this category
-                    </div>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        <PaletteHeader
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
-        {filteredNodes.length === 0 && searchQuery && (
-          <div className="text-center py-8 text-sm text-muted-foreground">
-            <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            No nodes found for "{searchQuery}"
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden relative z-10">
+          <div className="relative">
+            <LayoutGroup>
+              <FavoritesSection
+                favorites={favorites}
+                favoriteNodes={favoriteNodes}
+                togglingGroup={togglingGroup}
+                transition={TRANSITION}
+                onDragStart={handleDragStart}
+                onToggleFavorite={toggleFavorite}
+              />
+
+              {/* Regular Categories or Empty State */}
+              {(favorites.length === 0 && categoriesWithNodes.length === 0) ? (
+                <EmptyState />
+              ) : (
+                <CategorySection
+                  nodesByCategory={nodesByCategory}
+                  categoriesWithNodes={categoriesWithNodes}
+                  favoriteNodes={favoriteNodes}
+                  openAccordions={openAccordions}
+                  togglingGroup={togglingGroup}
+                  transition={TRANSITION}
+                  onValueChange={setOpenAccordions}
+                  onDragStart={handleDragStart}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )}
+            </LayoutGroup>
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
-</AccordionTrigger>
