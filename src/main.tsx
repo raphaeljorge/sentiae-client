@@ -12,7 +12,7 @@ import './index.css';
 import { worker } from './mocks/browser';
 
 // Initialize MSW
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env.MODE === 'development') {
   worker.start({
     onUnhandledRequest: 'bypass',
   });

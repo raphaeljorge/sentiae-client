@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Card, CardContent, CardFooter } from '@/shared/ui/card';
 import { Alert, AlertDescription } from '@/shared/ui/alert';
-import { Loader2, RefreshCw, Database } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { createDynamicNodes } from '@/shared/ui/flow/dynamic-node-factory';
 import { useWorkflow } from '@/shared/hooks/use-workflow';
 import { toast } from 'sonner';
@@ -60,17 +60,8 @@ export function ApiNodeLoader({ onClose }: ApiNodeLoaderProps) {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Database className="h-5 w-5" />
-          Load Nodes from API
-        </CardTitle>
-        <CardDescription>
-          Fetch node definitions from an API endpoint and add them to the workflow
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="w-full max-w-md border-0 shadow-none">
+      <CardContent className="p-0">
         <div className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="api-url" className="text-sm font-medium">
@@ -95,7 +86,7 @@ export function ApiNodeLoader({ onClose }: ApiNodeLoaderProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between p-0 pt-6">
         <Button variant="outline" onClick={onClose} disabled={isLoading}>
           Cancel
         </Button>
