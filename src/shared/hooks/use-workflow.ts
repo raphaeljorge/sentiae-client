@@ -86,7 +86,14 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	},
 	initializeWorkflow: (nodes: FlowNode[], edges: FlowEdge[]) => {
 		set({ nodes, edges });
-		get().validateWorkflow();
+		// Use non-strict validation during initialization
+		const workflow = prepareWorkflow(nodes, edges, { strict: false });
+		set((state) => ({
+			workflowExecutionState: {
+				...state.workflowExecutionState,
+				errors: workflow.errors,
+			},
+		}));
 	},
 	validateWorkflow: () => {
 		const { nodes, edges } = get();
@@ -100,7 +107,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			});
 		}
 
-		// Update states for errors if any
+		// Update states for errors if any (only for structural errors, not missing connections)
 		if (workflow.errors.length > 0) {
 			for (const error of workflow.errors) {
 				switch (error.type) {
@@ -112,12 +119,9 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 							});
 						}
 						break;
+					// Skip missing-required-connection errors in non-strict mode
 					case "missing-required-connection":
-						get().updateNodeExecutionState(error.node.id, {
-							status: "idle",
-							timestamp: new Date().toISOString(),
-							error,
-						});
+						// Don't update node state for missing connections during editing
 						break;
 				}
 			}
@@ -205,6 +209,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 		set((state) => ({
 			nodes: [...state.nodes, newNode],
 		}));
+		// Validate after adding node, but in non-strict mode
+		get().validateWorkflow();
 		return newNode;
 	},
 	updateNode(id, type, data) {
