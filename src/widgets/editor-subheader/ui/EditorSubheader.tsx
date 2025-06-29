@@ -129,6 +129,22 @@ export function EditorSubheader({
             <Play className="h-4 w-4" />
             {isRunning ? 'Running...' : 'Run'}
           </Button>
+          <motion.button
+            whileTap={{ scale: 0.975 }}
+            onClick={onRun}
+            disabled={isRunning}
+            className="flex w-full h-8 text-xs cursor-pointer items-center justify-center rounded-lg bg-teal-500 dark:bg-teal-600/80 px-3 py-1.5 text-white transition-colors duration-300 dark:hover:bg-teal-800 hover:bg-teal-600 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="mr-1 text-neutral-200">
+              {isRunning ? 'Running...' : 'Run'}
+            </span>
+            <span>{isRunning ? 'Flow' : 'Flow'}</span>
+            <div className="mx-2 h-4 w-px bg-white/40 rounded-full" />
+            <div className="flex items-center gap-1 rounded-md bg-white/20 px-1.5 py-0.5 -mr-1">
+              <Command className="h-3 w-3" />
+              {isRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+            </div>
+          </motion.button>
         </div>
       </div>
     </div>
