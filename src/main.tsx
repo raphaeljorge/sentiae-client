@@ -11,13 +11,6 @@ import './index.css';
 // Import MSW for API mocking
 import { worker } from './mocks/browser';
 
-// Initialize MSW
-if (import.meta.env.MODE === 'development') {
-  worker.start({
-    onUnhandledRequest: 'bypass',
-  });
-}
-
 // Create a new router instance
 const router = createRouter({ routeTree });
 
@@ -31,15 +24,26 @@ declare module '@tanstack/react-router' {
 // Create a client
 const queryClient = new QueryClient();
 
-// Initialize app
-const rootElement = document.getElementById('root');
-if (rootElement) {
-  createRoot(rootElement).render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </StrictMode>
-  );
+// Function to initialize the app
+async function enableMocking() {
+  if (import.meta.env.MODE === 'development') {
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+    });
+  }
 }
+
+// Initialize MSW and then start the app
+enableMocking().then(() => {
+  const rootElement = document.getElementById('root');
+  if (rootElement) {
+    createRoot(rootElement).render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </StrictMode>
+    );
+  }
+});
