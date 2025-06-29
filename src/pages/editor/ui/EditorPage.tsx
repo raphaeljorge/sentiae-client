@@ -16,7 +16,7 @@ export function EditorPage() {
 
   if (!workflowId) {
     return (
-      <div className="h-screen w-full p-4 flex items-center justify-center">
+      <div className="h-full w-full p-4 flex items-center justify-center">
         <Alert className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -29,7 +29,7 @@ export function EditorPage() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full p-4">
+      <div className="h-full w-full p-4">
         <Skeleton className="h-full w-full" />
       </div>
     );
@@ -37,7 +37,7 @@ export function EditorPage() {
 
   if (error) {
     return (
-      <div className="h-screen w-full p-4 flex items-center justify-center">
+      <div className="h-full w-full p-4 flex items-center justify-center">
         <Alert className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -50,7 +50,7 @@ export function EditorPage() {
 
   if (!workflow) {
     return (
-      <div className="h-screen w-full p-4 flex items-center justify-center">
+      <div className="h-full w-full p-4 flex items-center justify-center">
         <Alert className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -62,10 +62,8 @@ export function EditorPage() {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col">
-      <div className="flex-1">
-        <FlowEditor workflow={workflow} />
-      </div>
+    <div className="h-full w-full flex flex-col">
+      <FlowEditor workflow={workflow} />
     </div>
   );
 }

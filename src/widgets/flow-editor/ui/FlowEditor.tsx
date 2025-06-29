@@ -137,6 +137,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   };
 
   const getWorkflowStatus = () => {
+    if (workflowExecutionState.isRunning) return 'running';
     if (workflowExecutionState.errors.length > 0) return 'error';
     if (workflowExecutionState.finishedAt) return 'success';
     return 'idle';
@@ -182,23 +183,6 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
             <MiniMap />
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
             
-            {/* Legacy Node Panel - keeping for backward compatibility */}
-            <Panel position="top-center" className="flex gap-2">
-              {nodeTypesForPanel.map((nodeType) => (
-                <Button
-                  key={nodeType.type}
-                  variant="outline"
-                  size="sm"
-                  className="cursor-grab flex items-center gap-2"
-                  draggable
-                  onDragStart={(e) => onDragStart(e, nodeType.type)}
-                >
-                  <nodeType.icon className="h-4 w-4" />
-                  {nodeType.label}
-                </Button>
-              ))}
-            </Panel>
-
             {/* Status Panel */}
             {workflowExecutionState.errors.length > 0 && (
               <Panel position="bottom-left" className="bg-destructive/10 border border-destructive rounded p-3">
