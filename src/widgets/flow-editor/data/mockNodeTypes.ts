@@ -1,544 +1,261 @@
 import type { NodeType } from '@/shared/types/node';
 
 export const MOCK_NODE_TYPES: NodeType[] = [
+  // Text Input
   {
-    // Basic identification
     id: 'core/text-input',
     name: 'Text Input',
     description: 'Input text data into the workflow',
     category: 'core',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'PenLine',
-      resizable: true,
-      minWidth: 200,
-      minHeight: 150,
-      theme: {
-        borderColor: {
-          processing: 'border-orange-500',
-          error: 'border-red-500',
-        },
-      },
+      width: 250,
+      height: 200,
+      color: '#06b6d4', // Cyan
     },
     
-    // Behavior
     behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
+      resizable: true,
     },
     
-    // Configuration schema
-    configFields: [
+    fields: [
       {
         key: 'value',
         type: 'textarea',
         label: 'Text Value',
-        description: 'The text content for this input node',
-        required: false,
-        defaultValue: '',
         placeholder: 'Enter your text here...',
+        props: { autoResize: true },
       },
     ],
     
-    // Handle definitions
-    staticHandles: [
-      {
-        id: 'result',
-        title: 'Result',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'The text output from this node',
-      },
+    handles: [
+      { id: 'result', title: 'Result', type: 'source', position: 'right' },
     ],
     
-    // Features
-    features: {
-      statusIndicator: {
-        enabled: true,
-        showInHeader: false,
-      },
-    },
+    features: ['status-indicator'],
     
-    // Component mapping (temporary until git-based)
-    componentType: 'text-input',
-    
-    // Git Repository
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'text-input',
       version: '1.0.0',
     },
     
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['input', 'text', 'core'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    author: 'core',
+    license: 'MIT',
+    keywords: ['input', 'text', 'core'],
   },
   
+  // Visualize Text
   {
-    // Basic identification
     id: 'core/visualize-text',
     name: 'Visualize Text',
     description: 'Display and visualize text content with markdown support',
     category: 'core',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'Eye',
-      resizable: true,
-      minWidth: 200,
-      minHeight: 150,
-      theme: {
-        borderColor: {
-          processing: 'border-orange-500',
-          error: 'border-red-500',
-        },
-      },
+      width: 300,
+      height: 200,
+      color: '#8b5cf6', // Purple
     },
     
-    // Behavior
     behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
+      resizable: true,
     },
     
-    // Configuration schema
-    configFields: [],
+    fields: [],
     
-    // Handle definitions
-    staticHandles: [
-      {
-        id: 'input',
-        title: 'Input',
-        type: 'target',
-        position: 'left',
-        required: false,
-        description: 'Text content to visualize',
-      },
+    handles: [
+      { id: 'input', title: 'Input', type: 'target', position: 'left' },
     ],
     
-    // Features
-    features: {
-      markdownRenderer: {
-        enabled: true,
-        allowHtml: false,
-        sanitize: true,
-      },
-      statusIndicator: {
-        enabled: true,
-        showInHeader: false,
-      },
-    },
+    features: ['markdown-renderer', 'status-indicator'],
     
-    // Component mapping (temporary until git-based)
-    componentType: 'visualize-text',
-    
-    // Git Repository
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'visualize-text',
       version: '1.0.0',
     },
-
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['visualization', 'markdown', 'display', 'core'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    
+    author: 'core',
+    license: 'MIT',
+    keywords: ['visualization', 'markdown', 'display', 'core'],
   },
   
+  // Generate Text
   {
-    // Basic identification
     id: 'core/generate-text',
     name: 'Generate Text',
     description: 'Generate text using AI models with customizable tools',
     category: 'ai',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'Bot',
       width: 350,
-      className: 'hover:ring-orange-500',
-      theme: {
-        borderColor: {
-          processing: 'border-orange-500',
-          error: 'border-red-500',
-        },
-      },
+      color: '#f97316', // Orange
     },
     
-    // Behavior
-    behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
-    },
-    
-    // Configuration schema
-    configFields: [
+    fields: [
       {
         key: 'model',
         type: 'model',
         label: 'AI Model',
-        description: 'The AI model to use for text generation',
         required: true,
         defaultValue: 'llama-3.1-8b-instant',
       },
-    ],
-    
-    // Handle definitions
-    staticHandles: [
-      {
-        id: 'system',
-        title: 'System',
-        type: 'target',
-        position: 'left',
-        required: false,
-        description: 'System prompt for the AI model',
-      },
-      {
-        id: 'prompt',
-        title: 'Prompt',
-        type: 'target',
-        position: 'left',
-        required: false,
-        description: 'User prompt for text generation',
-      },
-      {
-        id: 'result',
-        title: 'Result',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'Generated text output',
-      },
-    ],
-    
-    // Dynamic handles
-    dynamicHandles: [
       {
         key: 'tools',
-        title: 'Tool outputs',
-        type: 'source',
-        position: 'right',
-        allowCreate: true,
-        allowEdit: true,
-        allowDelete: true,
-        showDescription: true,
-        schema: {
-          name: { required: true },
-          description: { required: false },
+        type: 'dynamic-handles',
+        label: 'Tool Outputs',
+        handles: {
+          type: 'source',
+          position: 'right',
+          max: 20,
+          showDescription: true,
+          section: 'bottom',
         },
       },
     ],
     
-    // Features
-    features: {
-      modelSelector: {
-        enabled: true,
-        disabled: true, // disabled during execution
-        disabledModels: ['gpt-4o', 'gpt-4o-mini', 'deepseek-r1-distill-llama-70b'],
-      },
-      statusIndicator: {
-        enabled: true,
-        showInHeader: true,
-      },
-    },
+    handles: [
+      { id: 'system', title: 'System', type: 'target', position: 'left' },
+      { id: 'prompt', title: 'Prompt', type: 'target', position: 'left' },
+      { id: 'result', title: 'Result', type: 'source', position: 'right' },
+    ],
     
-    // Component mapping (temporary until git-based)
-    componentType: 'generate-text',
+    features: ['model-selector', 'status-indicator'],
     
-    // Git Repository
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'generate-text',
       version: '1.0.0',
     },
-
-    // Execution configuration
-    execution: {
-      timeout: 300, // 5 minutes
-      retries: 3,
-      parallel: false,
-    },
     
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['ai', 'text generation', 'llm', 'core'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    author: 'core',
+    license: 'MIT',
+    keywords: ['ai', 'text-generation', 'llm', 'core'],
   },
   
+  // Prompt Crafter
   {
-    // Basic identification
     id: 'core/prompt-crafter',
     name: 'Prompt Crafter',
     description: 'Design and test complex prompts with multiple variables',
     category: 'ai',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'PencilRuler',
       width: 350,
-      className: 'hover:ring-orange-500',
-      theme: {
-        borderColor: {
-          processing: 'border-orange-500',
-          error: 'border-red-500',
-        },
-      },
+      color: '#8b5cf6', // Purple
     },
     
-    // Behavior
-    behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
-    },
-    
-    // Configuration schema
-    configFields: [
+    fields: [
       {
         key: 'template',
         type: 'code',
         label: 'Prompt Template',
-        description: 'Template with variables in {{variable}} format',
-        required: false,
-        defaultValue: '',
         placeholder: 'Craft your prompt here... Use {{input-name}} to reference inputs',
+        props: { language: 'prompt', height: '150px' },
       },
-    ],
-    
-    // Handle definitions
-    staticHandles: [
       {
-        id: 'result',
-        title: 'Result',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'The crafted prompt with variables replaced',
-      },
-    ],
-    
-    // Dynamic handles
-    dynamicHandles: [
-      {
-        key: 'template-tags',
-        title: 'Inputs',
-        type: 'target',
-        position: 'left',
-        allowCreate: true,
-        allowEdit: true,
-        allowDelete: true,
-        showDescription: false,
-        schema: {
-          name: { required: true },
+        key: 'inputs',
+        type: 'dynamic-handles',
+        label: 'Template Inputs',
+        handles: {
+          type: 'target',
+          position: 'left',
+          max: 15,
+          showDescription: false,
+          section: 'bottom',
         },
       },
     ],
     
-    // Features
-    features: {
-      codeEditor: {
-        enabled: true,
-        language: 'prompt',
-        height: '150px',
-        placeholder: 'Craft your prompt here... Use {{input-name}} to reference inputs',
-        features: {
-          lineNumbers: false,
-          syntax_highlighting: true,
-          auto_complete: false,
-        },
-      },
-      statusIndicator: {
-        enabled: true,
-        showInHeader: true,
-      },
-    },
+    handles: [
+      { id: 'result', title: 'Result', type: 'source', position: 'right' },
+    ],
     
-    // Component mapping (temporary until git-based)
-    componentType: 'prompt-crafter',
+    features: ['code-editor', 'status-indicator'],
     
-    // Git Repository
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'prompt-crafter',
       version: '1.0.0',
     },
-
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['prompt', 'template', 'ai', 'core'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    
+    author: 'core',
+    license: 'MIT',
+    keywords: ['prompt', 'template', 'ai', 'core'],
   },
   
+  // JSON Node
   {
-    // Basic identification
     id: 'core/json-node',
     name: 'JSON Node',
     description: 'Input, validate, and manipulate JSON data',
     category: 'core',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'FileJson',
       width: 350,
-      className: 'hover:ring-blue-500',
-      theme: {
-        borderColor: {
-          processing: 'border-blue-500',
-          error: 'border-red-500',
-        },
-        hoverRing: 'hover:ring-blue-500',
-      },
+      color: '#3b82f6', // Blue
     },
     
-    // Behavior
-    behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
-    },
-    
-    // Configuration schema
-    configFields: [
+    fields: [
       {
         key: 'json',
         type: 'json',
         label: 'JSON Definition',
-        description: 'JSON definition for the node structure',
         required: true,
         defaultValue: '{}',
         placeholder: 'Enter JSON node definition...',
-        validation: {
-          custom: 'validateJSON',
-        },
+        validation: [
+          { type: 'custom', customValidator: 'json', message: 'Invalid JSON' },
+        ],
+        props: { height: '200px' },
       },
     ],
     
-    // Handle definitions (will be dynamic based on JSON)
-    staticHandles: [],
+    handles: [],
     
-    // Features
-    features: {
-      codeEditor: {
-        enabled: true,
-        language: 'json',
-        height: '200px',
-        placeholder: 'Enter JSON node definition...',
-        features: {
-          lineNumbers: true,
-          syntax_highlighting: true,
-          auto_complete: true,
-        },
-      },
-      statusIndicator: {
-        enabled: true,
-        showInHeader: true,
-      },
-    },
+    features: ['code-editor', 'status-indicator'],
     
-    // Component mapping (temporary until git-based)
-    componentType: 'json-node',
-    
-    // Git Repository
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'json-node',
       version: '1.0.0',
     },
-
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['json', 'data', 'structure', 'core'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    
+    author: 'core',
+    license: 'MIT',
+    keywords: ['json', 'data', 'structure', 'core'],
   },
-
+  
+  // HTTP Request
   {
-    // Basic identification
     id: 'core/http-request',
     name: 'HTTP Request',
     description: 'Make HTTP requests to external APIs',
     category: 'integration',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'Globe',
       width: 300,
-      className: 'hover:ring-green-500',
-      theme: {
-        borderColor: {
-          processing: 'border-green-500',
-          error: 'border-red-500',
-        },
-      },
+      color: '#10b981', // Green
     },
     
-    // Behavior
-    behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
-    },
-    
-    // Configuration schema
-    configFields: [
-      {
-        key: 'url',
-        type: 'string',
-        label: 'URL',
-        description: 'The HTTP endpoint URL',
-        required: true,
-        placeholder: 'https://api.example.com/endpoint',
-        validation: {
-          pattern: '^https?://.+',
-        },
-      },
+    fields: [
       {
         key: 'method',
         type: 'select',
         label: 'HTTP Method',
-        description: 'The HTTP method to use',
         required: true,
         defaultValue: 'GET',
         options: [
@@ -550,195 +267,124 @@ export const MOCK_NODE_TYPES: NodeType[] = [
         ],
       },
       {
+        key: 'url',
+        type: 'string',
+        label: 'URL',
+        required: true,
+        placeholder: 'https://api.example.com/endpoint',
+        validation: [
+          { type: 'required', message: 'URL is required' },
+          { type: 'custom', customValidator: 'url', message: 'Invalid URL' },
+        ],
+      },
+      {
         key: 'headers',
         type: 'json',
         label: 'Headers',
-        description: 'HTTP headers as JSON object',
-        required: false,
-        defaultValue: '{}',
         placeholder: '{"Content-Type": "application/json"}',
+        validation: [
+          { type: 'custom', customValidator: 'json', message: 'Invalid JSON' },
+        ],
+      },
+      {
+        key: 'body',
+        type: 'textarea',
+        label: 'Request Body',
+        placeholder: 'Request body content...',
+        showWhen: { field: 'method', equals: 'POST' },
+      },
+      {
+        key: 'timeout',
+        type: 'number',
+        label: 'Timeout (seconds)',
+        defaultValue: 30,
+        validation: [
+          { type: 'min', value: 1, message: 'Minimum 1 second' },
+          { type: 'max', value: 300, message: 'Maximum 5 minutes' },
+        ],
       },
     ],
     
-    // Handle definitions
-    staticHandles: [
-      {
-        id: 'body',
-        title: 'Body',
-        type: 'target',
-        position: 'left',
-        required: false,
-        description: 'Request body data',
-      },
-      {
-        id: 'response',
-        title: 'Response',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'HTTP response data',
-      },
+    handles: [
+      { id: 'trigger', title: 'Trigger', type: 'target', position: 'left' },
+      { id: 'response', title: 'Response', type: 'source', position: 'right' },
+      { id: 'error', title: 'Error', type: 'source', position: 'right' },
     ],
     
-    // Git repository for code-based execution
+    features: ['status-indicator'],
+    
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/integration-nodes',
       path: 'http-request',
       version: '1.0.0',
-      buildCommand: 'npm install && npm run build',
-      runCommand: 'node dist/index.js',
     },
     
-    // Features
-    features: {
-      statusIndicator: {
-        enabled: true,
-        showInHeader: true,
-      },
-    },
-    
-    // Execution configuration
-    execution: {
-      timeout: 60, // 1 minute
-      retries: 2,
-      parallel: true,
-    },
-    
-    // Documentation
-    documentation: {
-      readme: 'HTTP Request node for making API calls',
-      examples: [
-        {
-          name: 'GET Request',
-          description: 'Simple GET request to fetch data',
-          config: {
-            url: 'https://api.github.com/users/octocat',
-            method: 'GET',
-            headers: '{"Accept": "application/json"}',
-          },
-        },
-      ],
-    },
-    
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['http', 'api', 'request', 'integration'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    author: 'core',
+    license: 'MIT',
+    keywords: ['http', 'api', 'request', 'integration'],
   },
   
+  // If Condition
   {
-    // Basic identification
     id: 'core/if-condition',
     name: 'If Condition',
-    description: 'Conditional logic branching based on input evaluation',
+    description: 'Conditional logic node for workflow branching',
     category: 'logic',
     version: '1.0.0',
     
-    // UI Configuration
     ui: {
       icon: 'GitBranch',
-      width: 280,
-      className: 'hover:ring-purple-500',
-      theme: {
-        borderColor: {
-          processing: 'border-purple-500',
-          error: 'border-red-500',
-        },
-      },
+      width: 250,
+      color: '#f59e0b', // Amber
     },
     
-    // Behavior
-    behavior: {
-      deletable: true,
-      draggable: true,
-      selectable: true,
-      connectable: true,
-    },
-    
-    // Configuration schema
-    configFields: [
+    fields: [
       {
         key: 'condition',
-        type: 'code',
+        type: 'string',
         label: 'Condition',
-        description: 'JavaScript expression to evaluate (returns boolean)',
         required: true,
-        placeholder: 'input.value > 10',
-        validation: {
-          custom: 'validateCondition',
-        },
+        placeholder: 'Enter condition logic...',
+      },
+      {
+        key: 'operator',
+        type: 'select',
+        label: 'Operator',
+        required: true,
+        defaultValue: 'equals',
+        options: [
+          { value: 'equals', label: 'Equals' },
+          { value: 'not_equals', label: 'Not Equals' },
+          { value: 'contains', label: 'Contains' },
+          { value: 'greater_than', label: 'Greater Than' },
+          { value: 'less_than', label: 'Less Than' },
+        ],
+      },
+      {
+        key: 'value',
+        type: 'string',
+        label: 'Compare Value',
+        required: true,
+        placeholder: 'Value to compare against...',
       },
     ],
     
-    // Handle definitions
-    staticHandles: [
-      {
-        id: 'input',
-        title: 'Input',
-        type: 'target',
-        position: 'left',
-        required: true,
-        description: 'Input value to evaluate',
-      },
-      {
-        id: 'true',
-        title: 'True',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'Output when condition is true',
-      },
-      {
-        id: 'false',
-        title: 'False',
-        type: 'source',
-        position: 'right',
-        required: false,
-        description: 'Output when condition is false',
-      },
+    handles: [
+      { id: 'input', title: 'Input', type: 'target', position: 'left' },
+      { id: 'true', title: 'True', type: 'source', position: 'right' },
+      { id: 'false', title: 'False', type: 'source', position: 'right' },
     ],
     
-    // Git repository for code-based execution
+    features: ['status-indicator'],
+    
     repository: {
-      repository: 'sentiae/core-nodes',
-      branch: 'main',
+      url: 'https://github.com/sentiae/core-nodes',
       path: 'if-condition',
       version: '1.0.0',
-      buildCommand: 'npm install && npm run build',
-      runCommand: 'node dist/index.js',
     },
     
-    // Features
-    features: {
-      codeEditor: {
-        enabled: true,
-        language: 'javascript',
-        height: '100px',
-        placeholder: 'input.value > 10',
-        features: {
-          lineNumbers: false,
-          syntax_highlighting: true,
-          auto_complete: true,
-        },
-      },
-      statusIndicator: {
-        enabled: true,
-        showInHeader: true,
-      },
-    },
-    
-    // Metadata
-    metadata: {
-      author: 'core',
-      license: 'MIT',
-      keywords: ['condition', 'logic', 'branching', 'if'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
+    author: 'core',
+    license: 'MIT',
+    keywords: ['logic', 'condition', 'branching', 'core'],
   },
 ];

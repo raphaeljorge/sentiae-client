@@ -175,7 +175,7 @@ function EditorSubheaderComponent({
 					<Separator orientation="vertical" className="h-6" />
 					
 					<motion.button
-						onClick={onSave}
+						onClick={onRun}
 						className="flex w-full h-8 text-xs cursor-pointer items-center justify-center rounded-lg bg-teal-500 dark:bg-teal-600/80 px-3 py-1.5 text-white transition-colors duration-300 dark:hover:bg-teal-800 hover:bg-teal-600 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						<span className="mr-1 text-neutral-200">

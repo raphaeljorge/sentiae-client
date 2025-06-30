@@ -51,7 +51,10 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   
   // Fetch node types from API
   const { data: apiNodeTypes, isLoading: nodeTypesLoading } = useNodeTypes();
-  const { data: workflowStatus } = useWorkflowStatus(workflow.id);
+  const { data: workflowStatus } = useWorkflowStatus(
+    workflow.id, 
+    { enabled: workflowExecutionState.isRunning }
+  );
 
   const nodeTypes = useMemo(() => {
     if (!apiNodeTypes) return {};
@@ -116,6 +119,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   };
 
   const handleRunWorkflow = () => {
+    console.log('handleRunWorkflow called, starting execution...');
     startExecution();
   };
 

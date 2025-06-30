@@ -358,6 +358,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	// Runtime
 
 	async startExecution() {
+		console.log('startExecution called');
+		
 		// Check if workflow has already run successfully
 		if (get().workflowExecutionState.timesRun > 3) {
 			const message =
@@ -369,6 +371,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 				error: new Error(message),
 			};
 		}
+
+		console.log('Times run check passed, current times run:', get().workflowExecutionState.timesRun);
 
 		// Reset execution state for all nodes
 		set((state) => ({
@@ -384,11 +388,16 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			})) as FlowNode[],
 		}));
 
+		console.log('Node states reset');
+
 		// Use strict validation for execution
 		const workflow = prepareWorkflow(get().nodes, get().edges, { strict: true });
 
+		console.log('Workflow prepared, errors:', workflow.errors);
+
 		if (workflow.errors.length > 0) {
 			const message = "Workflow validation failed";
+			console.error(message, workflow.errors);
 			return {
 				status: "error",
 				message,
@@ -396,6 +405,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 				validationErrors: workflow.errors,
 			};
 		}
+
+		console.log('Validation passed, setting isRunning to true');
 
 		// Set execution state to running
 		set((state) => ({
@@ -405,6 +416,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			},
 		}));
 
+		console.log('Starting SSE connection...');
+
 		try {
 			const sseClient = new SSEWorkflowExecutionClient();
 			const { updateNodeExecutionState } = get();
@@ -412,6 +425,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 			await new Promise((resolve, reject) => {
 				sseClient.connect(workflow, {
 					onNodeUpdate: (nodeId, state) => {
+						console.log('Node update received:', nodeId, state);
 						updateNodeExecutionState(nodeId, state);
 					},
 					onError: (error) => {
@@ -419,6 +433,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 						reject(error);
 					},
 					onComplete: ({ timestamp }) => {
+						console.log('Workflow execution completed at:', timestamp);
 						set((state) => ({
 							workflowExecutionState: {
 								...state.workflowExecutionState,
@@ -431,6 +446,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 				});
 			});
 
+			console.log('Workflow execution successful');
 			return {
 				status: "success",
 				message: "Workflow executed successfully",
@@ -443,6 +459,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 				error: error instanceof Error ? error : new Error(String(error)),
 			};
 		} finally {
+			console.log('Execution finished, setting isRunning to false');
 			// Reset execution state when done
 			set((state) => ({
 				workflowExecutionState: {

@@ -53,13 +53,13 @@ async function generateAIText({ prompt, system, model, tools }) {
 
 // Mock node processors
 const serverNodeProcessors = {
-  "text-input": async (node) => {
+  "core/text-input": async (node) => {
     return {
       result: node.data.config.value,
     };
   },
 
-  "prompt-crafter": async (node, targetsData) => {
+  "core/prompt-crafter": async (node, targetsData) => {
     if (!targetsData) {
       throw new Error("Targets data not found");
     }
@@ -88,7 +88,7 @@ const serverNodeProcessors = {
     };
   },
 
-  "generate-text": async (node, targetsData) => {
+  "core/generate-text": async (node, targetsData) => {
     const system = targetsData?.system;
     const prompt = targetsData?.prompt;
     
@@ -106,7 +106,7 @@ const serverNodeProcessors = {
     return result.parsedResult;
   },
 
-  "visualize-text": async () => {
+  "core/visualize-text": async () => {
     return undefined;
   },
 };

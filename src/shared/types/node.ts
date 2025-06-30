@@ -1,6 +1,47 @@
 export type NodeCategory = 'core' | 'auth' | 'database' | 'logic' | 'ai' | 'integration';
 
-// Handle definition types
+// Simplified and cleaner field types
+export type FieldType = 
+  | 'string' 
+  | 'number' 
+  | 'boolean' 
+  | 'select' 
+  | 'model' 
+  | 'json' 
+  | 'textarea' 
+  | 'code'
+  | 'dynamic-handles';
+
+// Simplified configuration field
+export interface ConfigField {
+  key: string;
+  type: FieldType;
+  label: string;
+  description?: string;
+  placeholder?: string;
+  required?: boolean;
+  defaultValue?: any;
+  options?: Array<{ value: string; label: string }>;
+  validation?: ValidationRule[];
+  
+  // Conditional display (simplified)
+  showWhen?: { field: string; equals: any };
+  hideWhen?: { field: string; equals: any };
+  
+  // Dynamic handles configuration (only for dynamic-handles type)
+  handles?: {
+    type: 'source' | 'target';
+    position: 'left' | 'right' | 'top' | 'bottom';
+    max?: number;
+    showDescription?: boolean;
+    section?: 'top' | 'bottom' | 'inline'; // where to render the handles UI
+  };
+  
+  // Field-specific props
+  props?: Record<string, any>;
+}
+
+// Simplified handle definition
 export interface HandleDefinition {
   id: string;
   title: string;
@@ -10,43 +51,9 @@ export interface HandleDefinition {
   description?: string;
 }
 
-export interface DynamicHandleDefinition {
-  key: string; // e.g., "tools", "template-tags"
-  title: string;
-  type: 'source' | 'target';
-  position: 'left' | 'right' | 'top' | 'bottom';
-  allowCreate: boolean;
-  allowEdit: boolean;
-  allowDelete: boolean;
-  showDescription?: boolean;
-  maxCount?: number;
-  schema: {
-    name: { required: boolean };
-    description?: { required: boolean };
-  };
-}
-
-// Configuration field types
-export interface ConfigField {
-  key: string;
-  type: 'string' | 'number' | 'boolean' | 'select' | 'model' | 'json' | 'textarea' | 'code';
-  label: string;
-  description?: string;
-  required?: boolean;
-  defaultValue?: any;
-  options?: Array<{ value: string; label: string }>; // for select type
-  placeholder?: string;
-  validation?: {
-    min?: number;
-    max?: number;
-    pattern?: string;
-    custom?: string; // custom validation function name
-  };
-}
-
 // UI Configuration
 export interface NodeUIConfig {
-  icon: string; // Lucide icon name
+  icon: string | CustomIcon; // Enhanced icon support
   width?: number;
   height?: number;
   minWidth?: number;
@@ -61,7 +68,12 @@ export interface NodeUIConfig {
       success?: string;
     };
     hoverRing?: string;
+    gradient?: {
+      from: string;
+      to: string;
+    };
   };
+  customStyles?: Record<string, any>; // additional CSS properties
 }
 
 // Node behavior configuration
@@ -116,63 +128,216 @@ export interface NodeFeatures {
   };
 }
 
-export interface NodeType {
-  // Basic identification
+// Plugin system types
+export interface PluginFieldType {
+  type: string;
+  component: React.ComponentType<any>;
+  validator?: (value: any, field: ConfigField) => string | null;
+  defaultValue?: any;
+}
+
+export interface PluginRegistry {
+  fieldTypes: Map<string, PluginFieldType>;
+  validators: Map<string, (value: any, field: ConfigField, allValues: Record<string, any>) => string | null>;
+  icons: Map<string, React.ComponentType<any> | string>;
+  edgeTypes: Map<string, React.ComponentType<any>>;
+}
+
+// Enhanced validation types
+export interface ValidationRule {
+  type: 'required' | 'min' | 'max' | 'pattern' | 'custom' | 'conditional';
+  value?: any;
+  message?: string;
+  condition?: {
+    field: string;
+    operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than';
+    value: any;
+  };
+  customValidator?: string; // reference to plugin validator
+}
+
+// Conditional field display
+export interface ConditionalDisplay {
+  field: string; // field to watch
+  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'empty' | 'not_empty';
+  value?: any;
+  action: 'show' | 'hide' | 'enable' | 'disable';
+}
+
+// Dynamic edge configuration
+export interface EdgeTypeConfig {
   id: string;
   name: string;
-  description: string;
-  category: NodeCategory;
-  version: string;
-  
-  // UI Configuration
-  ui: NodeUIConfig;
-  
-  // Behavior
-  behavior: NodeBehavior;
-  
-  // Configuration schema
-  configFields: ConfigField[];
-  
-  // Handle definitions
-  staticHandles: HandleDefinition[];
-  dynamicHandles?: DynamicHandleDefinition[];
-  
-  // Features
-  features?: NodeFeatures;
-  
-  // Git repository for code-based execution
-  repository?: GitRepositoryConfig;
-  
-  // Component mapping (for now, until we move to git-based)
-  componentType?: string; // maps to existing React components
-  
-  // Execution configuration
-  execution?: {
-    timeout?: number; // in seconds
-    retries?: number;
-    parallel?: boolean;
-    dependencies?: string[]; // node IDs that must complete first
+  component?: string; // reference to plugin component
+  style?: {
+    stroke?: string;
+    strokeWidth?: number;
+    strokeDasharray?: string;
+    animated?: boolean;
+    gradient?: {
+      from: string;
+      to: string;
+    };
+  };
+  behavior?: {
+    selectable?: boolean;
+    deletable?: boolean;
+    reconnectable?: boolean;
+  };
+  validation?: {
+    sourceTypes?: string[]; // allowed source node types
+    targetTypes?: string[]; // allowed target node types
+    maxConnections?: number;
+  };
+  data?: Record<string, any>; // custom data for the edge
+}
+
+// Custom icon configuration
+export interface CustomIcon {
+  type: 'lucide' | 'custom' | 'url' | 'svg' | 'plugin';
+  value: string; // icon name, URL, SVG string, or plugin reference
+  fallback?: string; // fallback icon name
+  size?: number;
+  color?: string;
+  className?: string;
+}
+
+// Dynamic handles configuration for the dynamic-handles field type
+export interface DynamicHandlesConfig {
+  // The key in dynamicHandles data where these handles are stored
+  handleKey: string;
+  // Type of handles (source/target)
+  handleType: 'source' | 'target';
+  // Position of handles
+  position: 'left' | 'right' | 'top' | 'bottom';
+  // Label for the section
+  sectionLabel: string;
+  // Button text for adding new handles
+  addButtonText: string;
+  // Whether to show description field
+  showDescription?: boolean;
+  // Maximum number of handles allowed
+  maxHandles?: number;
+  // Whether to show the handles in a special layout section
+  renderInSection?: boolean;
+}
+
+// Enhanced layout configuration - more flexible and universal
+export interface LayoutConfig {
+  // Main layout structure
+  structure?: {
+    // How to organize the main content area
+    contentLayout?: 'vertical' | 'horizontal' | 'grid' | 'custom';
+    // Whether to show field labels
+    showLabels?: boolean;
+    // Field arrangement
+    fieldGroups?: FieldGroup[];
   };
   
-  // Documentation
-  documentation?: {
-    readme?: string;
-    examples?: Array<{
-      name: string;
-      description: string;
-      config: Record<string, any>;
-    }>;
-    changelog?: string;
+  // Special sections that can be added to any node
+  sections?: {
+    // Tool/dynamic handles sections
+    tools?: {
+      position: 'top' | 'bottom' | 'left' | 'right';
+      title: string;
+      style?: 'grey-bar' | 'bordered' | 'plain';
+      fieldKey: string; // which dynamic-handles field to render here
+    }[];
+    
+    // Custom content sections
+    content?: {
+      position: 'top' | 'bottom' | 'left' | 'right';
+      title?: string;
+      fieldKeys: string[]; // which fields to render in this section
+      style?: 'card' | 'bordered' | 'plain';
+    }[];
+    
+    // Status/action sections
+    actions?: {
+      position: 'header' | 'footer' | 'sidebar';
+      items: ActionItem[];
+    }[];
+  };
+  
+  // Visual overrides
+  visual?: {
+    // Override default field rendering
+    fieldOverrides?: {
+      [fieldKey: string]: {
+        width?: 'full' | 'half' | 'third' | 'auto';
+        style?: 'compact' | 'expanded' | 'minimal';
+        position?: 'inline' | 'section';
+      };
+    };
+    
+    // Handle positioning
+    handleLayout?: {
+      leftSide?: string[]; // field keys for left-side handles
+      rightSide?: string[]; // field keys for right-side handles
+      topSide?: string[]; // field keys for top handles
+      bottomSide?: string[]; // field keys for bottom handles
+    };
+  };
+}
+
+// Field grouping for better organization
+export interface FieldGroup {
+  title?: string;
+  fields: string[]; // field keys
+  layout?: 'vertical' | 'horizontal' | 'grid';
+  collapsible?: boolean;
+  defaultExpanded?: boolean;
+}
+
+// Action items for action sections
+export interface ActionItem {
+  type: 'button' | 'toggle' | 'status' | 'custom';
+  label: string;
+  action?: string; // action identifier
+  icon?: string;
+  variant?: 'primary' | 'secondary' | 'destructive';
+}
+
+// Much simpler node type definition
+export interface NodeType {
+  // Identity
+  id: string; // author/node-name
+  name: string;
+  description: string;
+  category: string;
+  version: string;
+  
+  // Simple UI configuration
+  ui?: {
+    icon?: string;
+    width?: number;
+    height?: number;
+    color?: string; // Single accent color that drives everything
+    className?: string;
+  };
+  
+  // Simple behavior
+  behavior?: {
+    deletable?: boolean;
+    resizable?: boolean;
+  };
+  
+  // The core: fields and handles
+  fields: ConfigField[];
+  handles: HandleDefinition[];
+  
+  // Simple feature flags
+  features?: string[]; // ['model-selector', 'status-indicator', 'code-editor']
+  
+  // Repository info
+  repository: {
+    url: string; // Full repo URL
+    path?: string;
+    version: string;
   };
   
   // Metadata
-  metadata?: {
-    author?: string;
-    license?: string;
-    keywords?: string[];
-    createdAt?: string;
-    updatedAt?: string;
-    deprecated?: boolean;
-    experimental?: boolean;
-  };
+  author: string;
+  license?: string;
+  keywords?: string[];
 }

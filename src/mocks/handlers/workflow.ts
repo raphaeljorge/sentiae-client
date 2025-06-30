@@ -107,4 +107,10 @@ export const workflowHandlers = [
       errorCount: randomStatus === 'error' ? Math.floor(Math.random() * 5) + 1 : 0,
     });
   }),
+
+  // Add a passthrough handler for the workflow execution endpoint
+  http.post('/api/workflow/execute', () => {
+    // This tells MSW to perform the request as if MSW were not active.
+    return; 
+  }),
 ]; 
