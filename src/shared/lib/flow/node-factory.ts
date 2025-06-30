@@ -35,73 +35,24 @@ export function createNode(
 		initialData,
 	});
 
-	// Create node data structure that matches the expected controller types
-	// while using the JSON configuration as the source of truth
-	const baseNode = {
+	// Create fully dynamic node structure based purely on JSON configuration
+	// No more hardcoded type-specific data structures!
+	const dynamicNode = {
 		id: builtNodeInfo.id,
 		type: nodeType,
 		position: builtNodeInfo.position,
 		// Apply UI configuration from the JSON
 		...(nodeTypeDefinition.ui.width && { width: nodeTypeDefinition.ui.width }),
 		...(nodeTypeDefinition.ui.height && { height: nodeTypeDefinition.ui.height }),
+		// Use the complete data structure from the JSON configuration
+		data: {
+			...builtNodeInfo.data,
+			// Store the node definition for the GenericNodeController
+			definition: nodeTypeDefinition,
+		},
 	};
 
-	// Build type-specific data structures based on the JSON configuration
-	switch (nodeType) {
-		case "generate-text":
-			return {
-				...baseNode,
-				type: "generate-text" as const,
-				data: {
-					config: {
-						model: (builtNodeInfo.data.config.model || "llama-3.1-8b-instant") as any,
-					},
-					dynamicHandles: {
-						tools: builtNodeInfo.data.dynamicHandles?.tools || [],
-					},
-				},
-			} as any; // Type assertion for now due to complex controller types
-
-		case "prompt-crafter":
-			return {
-				...baseNode,
-				type: "prompt-crafter" as const,
-				data: {
-					config: {
-						template: builtNodeInfo.data.config.template || "",
-					},
-					dynamicHandles: {
-						"template-tags": builtNodeInfo.data.dynamicHandles?.["template-tags"] || [],
-					},
-				},
-			} as any; // Type assertion for now due to complex controller types
-
-		case "text-input":
-			return {
-				...baseNode,
-				type: "text-input" as const,
-				data: {
-					config: {
-						value: builtNodeInfo.data.config.value || "",
-					},
-				},
-			} as any; // Type assertion for now due to complex controller types
-
-		case "visualize-text":
-			return {
-				...baseNode,
-				type: "visualize-text" as const,
-				data: {},
-			} as any; // Type assertion for now due to complex controller types
-
-		default:
-			// For unsupported types, log and fallback to a basic structure
-			console.warn(`Node type ${nodeType} not fully supported in workflow system yet. Using basic structure from JSON config.`);
-			return {
-				...baseNode,
-				data: builtNodeInfo.data,
-			} as any;
-	}
+	return dynamicNode as FlowNode;
 }
 
 // Legacy factory functions have been removed - all node creation now uses the JSON-driven createNode function

@@ -1,4 +1,4 @@
-import { useEffect, useState, type DragEvent } from 'react';
+import { useEffect, useState, type DragEvent, useMemo } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -23,25 +23,9 @@ import type { FlowNode, FlowEdge } from '@/shared/lib/flow/workflow';
 import { NodePalette } from './NodePalette';
 import { EditorSubheader } from '@/widgets/editor-subheader';
 
-// Import node controllers
-import { GenerateTextNodeController } from '@/shared/ui/flow/generate-text-node-controller';
-import { PromptCrafterNodeController } from '@/shared/ui/flow/prompt-crafter-node-controller';
-import { TextInputNodeController } from '@/shared/ui/flow/text-input-node-controller';
-import { VisualizeTextNodeController } from '@/shared/ui/flow/visualize-text-node-controller';
-import { JsonNodeController } from '@/shared/ui/flow/json-node-controller';
+// Import only the generic controller and edge controller
+import { GenericNodeController } from '@/shared/ui/flow/generic-node-controller';
 import { StatusEdgeController } from '@/shared/ui/flow/status-edge-controller';
-import { HttpRequestNodeController } from '@/shared/ui/flow/http-request-node-controller';
-import { IfConditionNodeController } from '@/shared/ui/flow/if-condition-node-controller';
-
-const nodeTypes = {
-  'core/generate-text': GenerateTextNodeController,
-  'core/prompt-crafter': PromptCrafterNodeController,
-  'core/text-input': TextInputNodeController,
-  'core/visualize-text': VisualizeTextNodeController,
-  'core/json-node': JsonNodeController,
-  'core/http-request': HttpRequestNodeController,
-  'core/if-condition': IfConditionNodeController,
-};
 
 const edgeTypes = {
   'status': StatusEdgeController,
@@ -68,6 +52,20 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   // Fetch node types from API
   const { data: apiNodeTypes, isLoading: nodeTypesLoading } = useNodeTypes();
   const { data: workflowStatus } = useWorkflowStatus(workflow.id);
+
+  const nodeTypes = useMemo(() => {
+    if (!apiNodeTypes) return {};
+
+    const allNodeTypes = apiNodeTypes.reduce((acc, nodeType) => {
+      // Check if a specialized controller exists for this node's componentType
+      const controller = GenericNodeController;
+      
+      acc[nodeType.id] = controller;
+      return acc;
+    }, {} as Record<string, React.ComponentType<any>>);
+
+    return allNodeTypes;
+  }, [apiNodeTypes]);
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { screenToFlowPosition } = useReactFlow();
