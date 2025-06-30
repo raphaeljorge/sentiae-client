@@ -27,7 +27,7 @@ export function LayoutWrapper({ children, layout }: LayoutWrapperProps) {
           <div className="group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar">
             {/* Hidden peer sidebar for CSS targeting */}
             <div className="peer" data-variant="inset" style={{ display: 'none' }} />
-            <div className="flex flex-col flex-1 md:peer-data-[variant=inset]:rounded-xl">
+            <div className="flex flex-col flex-1 overflow-hidden md:peer-data-[variant=inset]:rounded-xl">
               <TopHeader />
               <SidebarInset className="flex-1 rounded-t-none">
                 {children}
@@ -37,7 +37,6 @@ export function LayoutWrapper({ children, layout }: LayoutWrapperProps) {
         </SidebarProvider>
       );
 
-    case 'none':
     default:
       return <>{children}</>;
   }

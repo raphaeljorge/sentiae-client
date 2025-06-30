@@ -24,12 +24,41 @@ declare module '@tanstack/react-router' {
 // Create a client
 const queryClient = new QueryClient();
 
+// Function to clean up problematic cookies that might cause MSW issues
+function clearProblematicCookies() {
+  try {
+    // Get all cookies and check for invalid names
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name] = cookie.trim().split('=');
+      // Check if cookie name contains invalid characters
+      if (name && !/^[a-zA-Z0-9_-]+$/.test(name)) {
+        // Try to delete invalid cookies
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to clean cookies:', error);
+  }
+}
+
 // Function to initialize the app
 async function enableMocking() {
-  if (import.meta.env.MODE === 'development') {
-    await worker.start({
-      onUnhandledRequest: 'bypass',
-    });
+  // Only enable in development mode
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    try {
+      // Clean problematic cookies before starting MSW
+      clearProblematicCookies();
+      
+      await worker.start({
+        onUnhandledRequest: 'bypass',
+        quiet: true,
+      });
+    } catch (error) {
+      console.warn('MSW failed to start:', error);
+      // Continue without MSW if it fails
+    }
   }
 }
 

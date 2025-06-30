@@ -16,6 +16,7 @@ import '@xyflow/react/dist/style.css';
 import { Button } from '@/shared/ui/button';
 import { Eye, PenLine } from 'lucide-react';
 import { useWorkflow } from '@/shared/hooks/use-workflow';
+import { useNodeTypes } from '@/shared/hooks/use-node-types';
 import type { WorkflowResponse } from '@/shared/types/workflow';
 import type { FlowNode, FlowEdge } from '@/shared/lib/flow/workflow';
 import { NodePalette } from './NodePalette';
@@ -46,7 +47,7 @@ interface FlowEditorProps {
 }
 
 function FlowEditorContent({ workflow }: FlowEditorProps) {
-  const { 
+  const {
     nodes, 
     edges, 
     onNodesChange, 
@@ -55,11 +56,22 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
     startExecution, 
     workflowExecutionState,
     initializeWorkflow,
-    createNode
+    createNode,
+    setNodeTypes
   } = useWorkflow();
+  
+  // Fetch node types from API
+  const { data: apiNodeTypes, isLoading: nodeTypesLoading } = useNodeTypes();
 
-  const [isPaletteOpen, setIsPaletteOpen] = useState(true);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { screenToFlowPosition } = useReactFlow();
+
+  // Initialize node types when loaded
+  useEffect(() => {
+    if (apiNodeTypes && !nodeTypesLoading) {
+      setNodeTypes(apiNodeTypes);
+    }
+  }, [apiNodeTypes, nodeTypesLoading, setNodeTypes]);
 
   // Initialize workflow when it changes
   useEffect(() => {
@@ -156,7 +168,9 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
         />
 
         {/* Main Flow Editor */}
-        <div className={`h-full transition-all duration-300 ${isPaletteOpen ? 'ml-80' : 'ml-0'}`}>
+        <div 
+          className={`h-full transition-all duration-300 ${isPaletteOpen ? 'ml-80' : 'ml-0'}`}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -168,6 +182,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             fitView
+            height={200}
           >
             <Controls />
             <MiniMap />

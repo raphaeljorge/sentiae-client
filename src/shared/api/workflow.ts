@@ -53,16 +53,12 @@ export async function getAllWorkflows(): Promise<WorkflowResponse[]> {
   return Object.values(workflows);
 }
 
-export async function getWorkflow(id: string): Promise<WorkflowResponse> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
-  const workflow = workflows[id];
-  if (!workflow) {
+async function getWorkflow(id: string): Promise<WorkflowResponse> {
+  const response = await fetch(`/api/workflows/${id}`);
+  if (!response.ok) {
     throw new Error(`Workflow with id "${id}" not found`);
   }
-  
-  return workflow;
+  return response.json();
 }
 
 // Export the simple mock API functions

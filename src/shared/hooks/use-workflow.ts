@@ -1,4 +1,5 @@
 import { createNode } from "@/shared/lib/flow/node-factory";
+import type { NodeType } from "@/shared/types/node";
 import { SSEWorkflowExecutionClient } from "@/shared/lib/flow/sse-workflow-execution-client";
 import {
 	type DynamicHandle,
@@ -22,6 +23,8 @@ import { createWithEqualityFn } from "zustand/traditional";
 export interface WorkflowState {
 	nodes: FlowNode[];
 	edges: FlowEdge[];
+	nodeTypes: NodeType[];
+	setNodeTypes: (nodeTypes: NodeType[]) => void;
 	onNodesChange: (changes: NodeChange<FlowNode>[]) => void;
 	onEdgesChange: (changes: EdgeChange<FlowEdge>[]) => void;
 	onConnect: (connection: Connection) => void;
@@ -78,6 +81,10 @@ export interface WorkflowState {
 const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	nodes: [],
 	edges: [],
+	nodeTypes: [],
+	setNodeTypes: (nodeTypes: NodeType[]) => {
+		set({ nodeTypes });
+	},
 	workflowExecutionState: {
 		isRunning: false,
 		finishedAt: null,
@@ -205,7 +212,8 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 		return node;
 	},
 	createNode(nodeType, position) {
-		const newNode = createNode(nodeType, position);
+		const { nodeTypes } = get();
+		const newNode = createNode(nodeType, position, nodeTypes);
 		set((state) => ({
 			nodes: [...state.nodes, newNode],
 		}));
@@ -337,10 +345,10 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 				return node;
 			}),
 			edges: get().edges.filter((edge) => {
-				if (edge.source === nodeId && edge.sourceHandle === handleId) {
+				if (edge.source === nodeId && edge.sourceHandleId === handleId) {
 					return false;
 				}
-				if (edge.target === nodeId && edge.targetHandle === handleId) {
+				if (edge.target === nodeId && edge.targetHandleId === handleId) {
 					return false;
 				}
 				return true;

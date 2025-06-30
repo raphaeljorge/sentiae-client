@@ -10,7 +10,7 @@ export const nodeTypesHandlers = [
   }),
 
   // Get node schemas
-  http.get('/api/node-schemas', () => {
+  http.get('/api/node-schemas', _ => {
     return HttpResponse.json(NODE_SCHEMA_EXAMPLES);
   }),
 

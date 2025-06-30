@@ -22,7 +22,7 @@ export function JsonNodeController({
 }: NodeProps<JsonNodeController>) {
   const updateNode = useWorkflow((state) => state.updateNode);
   const deleteNode = useWorkflow((state) => state.deleteNode);
-  const addNode = useWorkflow((state) => state.nodes);
+  const nodeTypes = useWorkflow((state) => state.nodeTypes);
   const setNodes = useWorkflow((state) => state.onNodesChange);
 
   const handleJsonChange = useCallback(
@@ -48,34 +48,8 @@ export function JsonNodeController({
           throw new Error("Valid position with x and y coordinates is required");
         }
 
-        // Create the node based on the JSON definition
-        const newNode = createNode(jsonData.type, jsonData.position);
-
-        // Apply custom data if provided
-        if (jsonData.data) {
-          // Deep merge the data
-          newNode.data = {
-            ...newNode.data,
-            ...jsonData.data,
-          };
-
-          // Handle specific node type configurations
-          if (jsonData.type === 'text-input' && jsonData.data.config?.value) {
-            newNode.data.config.value = jsonData.data.config.value;
-          }
-          
-          if (jsonData.type === 'generate-text' && jsonData.data.config?.model) {
-            newNode.data.config.model = jsonData.data.config.model;
-          }
-
-          // Handle dynamic handles if provided
-          if (jsonData.data.dynamicHandles) {
-            newNode.data.dynamicHandles = {
-              ...newNode.data.dynamicHandles,
-              ...jsonData.data.dynamicHandles,
-            };
-          }
-        }
+        // Create the node based on the JSON definition using the new NodeType system
+        const newNode = createNode(jsonData.type, jsonData.position, nodeTypes, jsonData.data);
 
         // Apply custom dimensions if provided
         if (jsonData.width) newNode.width = jsonData.width;
@@ -83,7 +57,7 @@ export function JsonNodeController({
 
         // Add the node to the workflow
         const addChange = {
-          type: 'add',
+          type: 'add' as const,
           item: newNode,
         };
         

@@ -1,9 +1,11 @@
 import type { GenerateTextNodeController } from "@/shared/ui/flow/generate-text-node-controller";
+import type { JsonNodeController } from "@/shared/ui/flow/json-node-controller";
 import type { PromptCrafterNodeController } from "@/shared/ui/flow/prompt-crafter-node-controller";
 import type { StatusEdgeController } from "@/shared/ui/flow/status-edge-controller";
 import type { TextInputNodeController } from "@/shared/ui/flow/text-input-node-controller";
 import type { VisualizeTextNodeController } from "@/shared/ui/flow/visualize-text-node-controller";
 import { nanoid } from "nanoid";
+import type { NodeType } from "@/shared/types/node";
 
 type Dependency = {
 	node: string;
@@ -99,11 +101,14 @@ const NODES_CONFIG: Partial<
 
 // Nodes
 
-export type FlowNode =
+type BaseFlowNode =
 	| VisualizeTextNodeController
 	| TextInputNodeController
 	| PromptCrafterNodeController
-	| GenerateTextNodeController;
+	| GenerateTextNodeController
+	| JsonNodeController;
+
+export type FlowNode = BaseFlowNode & { definition?: NodeType };
 
 // Edges
 
