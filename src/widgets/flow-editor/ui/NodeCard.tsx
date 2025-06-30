@@ -1,19 +1,19 @@
-import { motion } from 'motion/react';
-import { Package } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Package, Star, CheckCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip';
 import { IconButton } from '@/shared/ui/icon-button';
-import { Star } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { NodeTooltipContent } from './NodeTooltipContent';
 import type { NodeType } from '@/shared/types/node';
-import type { Transition } from 'motion/react';
+import type { Transition } from 'framer-motion';
+import * as LucideIcons from 'lucide-react';
 
 interface NodeCardProps {
   node: NodeType;
   isFavorited: boolean;
   layoutId: string;
   transition: Transition;
-  onDragStart: (event: React.DragEvent, nodeType: NodeType) => void;
+  onDragStart: (event: any, nodeType: NodeType) => void;
   onToggleFavorite: (nodeId: string, event: React.MouseEvent) => void;
   showGripHandle?: boolean;
 }
@@ -25,8 +25,10 @@ export function NodeCard({
   transition,
   onDragStart,
   onToggleFavorite,
-  showGripHandle = false,
 }: NodeCardProps) {
+  const Icon = (LucideIcons as any)[node.ui.icon] || Package;
+  const isCore = node.metadata?.author === 'core';
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -35,15 +37,21 @@ export function NodeCard({
           transition={transition}
           draggable
           onDragStart={(e) => onDragStart(e, node)}
-          className="flex items-center gap-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 p-2 cursor-move hover:bg-accent transition-colors group"
+          className="flex items-center gap-3 rounded-lg bg-card border p-2 cursor-move hover:bg-accent hover:border-accent-foreground transition-colors group"
         >
-          <div className="rounded-lg bg-background p-2">
-            <Package className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+          <div className="rounded-md bg-muted p-2">
+            <Icon className="h-5 w-5 text-muted-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate">{node.name}</div>
-            <div className="text-xs text-neutral-500 dark:text-neutral-400 font-medium truncate">
-              {node.description}
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold truncate">{node.name}</div>
+              <div className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-mono">
+                v{node.version}
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground font-medium truncate flex items-center gap-1.5">
+              <span>{node.metadata?.author}</span>
+              {isCore && <CheckCircle className="h-3 w-3 text-green-500" />}
             </div>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">

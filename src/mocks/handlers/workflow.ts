@@ -79,4 +79,32 @@ export const workflowHandlers = [
   http.get('https://simple-ai.dev/r/flow-orchestrator.json', () => {
     return HttpResponse.json(workflows['flow-orchestrator']);
   }),
+
+  http.get('/api/workflows/:id/status', ({ params }) => {
+    const { id } = params;
+    const workflow = workflows[id as string];
+    
+    if (!workflow) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    if (id === 'flow-chain') {
+      return HttpResponse.json({
+        workflowId: id,
+        status: 'success',
+        lastRun: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+        errorCount: 0,
+      });
+    }
+
+    const statuses = ['success', 'running', 'error', 'idle'] as const;
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+    return HttpResponse.json({
+      workflowId: id,
+      status: randomStatus,
+      lastRun: new Date().toISOString(),
+      errorCount: randomStatus === 'error' ? Math.floor(Math.random() * 5) + 1 : 0,
+    });
+  }),
 ]; 

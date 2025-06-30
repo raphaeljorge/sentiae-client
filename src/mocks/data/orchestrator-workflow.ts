@@ -4,7 +4,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
   nodes: [
     {
       id: 'feature-request',
-      type: 'text-input',
+      type: 'core/text-input',
       position: { x: 100, y: 400 },
       data: {
         config: {
@@ -16,7 +16,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'product-manager',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 500, y: 400 },
       data: {
         config: {
@@ -29,7 +29,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'frontend-developer',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 200 },
       data: {
         config: {
@@ -42,7 +42,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'backend-developer',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 400 },
       data: {
         config: {
@@ -55,7 +55,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'database-developer',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 600 },
       data: {
         config: {
@@ -68,7 +68,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'senior-developer',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 1300, y: 400 },
       data: {
         config: {
@@ -81,7 +81,7 @@ export const orchestratorWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'final-solution',
-      type: 'visualize-text',
+      type: 'core/visualize-text',
       position: { x: 1700, y: 400 },
       data: {},
       width: 350,

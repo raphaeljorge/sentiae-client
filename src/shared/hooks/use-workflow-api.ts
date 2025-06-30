@@ -8,6 +8,8 @@ export const WORKFLOW_QUERY_KEYS = {
   list: (filters: Record<string, unknown>) => [...WORKFLOW_QUERY_KEYS.lists(), { filters }] as const,
   details: () => [...WORKFLOW_QUERY_KEYS.all, 'detail'] as const,
   detail: (id: string) => [...WORKFLOW_QUERY_KEYS.details(), id] as const,
+  statuses: () => [...WORKFLOW_QUERY_KEYS.all, 'status'] as const,
+  status: (id: string) => [...WORKFLOW_QUERY_KEYS.statuses(), id] as const,
 };
 
 export function useWorkflows() {

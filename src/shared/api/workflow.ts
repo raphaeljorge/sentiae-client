@@ -1,4 +1,4 @@
-import type { WorkflowResponse } from '@/shared/types/workflow';
+import type { WorkflowResponse, WorkflowStatusResponse } from '@/shared/types/workflow';
 
 // Import workflow definitions directly as mock data
 import { chainWorkflowDefinition } from '@/mocks/data/chain-workflow';
@@ -61,8 +61,17 @@ async function getWorkflow(id: string): Promise<WorkflowResponse> {
   return response.json();
 }
 
+async function getWorkflowStatus(id: string): Promise<WorkflowStatusResponse> {
+  const response = await fetch(`/api/workflows/${id}/status`);
+  if (!response.ok) {
+    throw new Error(`Could not fetch status for workflow with id "${id}"`);
+  }
+  return response.json();
+}
+
 // Export the simple mock API functions
 export const workflowApi = {
   getWorkflows: getAllWorkflows,
   getWorkflow: getWorkflow,
+  getWorkflowStatus: getWorkflowStatus,
 }; 

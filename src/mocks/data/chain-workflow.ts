@@ -1,20 +1,10 @@
-import { MOCK_NODE_TYPES } from '@/widgets/flow-editor/data/mockNodeTypes';
 import type { WorkflowDefinition } from '@/shared/types/workflow';
-
-const findNodeDefinition = (type: string) => {
-  const definition = MOCK_NODE_TYPES.find(nodeType => nodeType.id === type);
-  if (!definition) {
-    throw new Error(`Node definition for type "${type}" not found.`);
-  }
-  return definition;
-};
 
 export const chainWorkflowDefinition: WorkflowDefinition = {
   nodes: [
     {
-      type: "text-input",
-      id: "articleInput",
-      definition: findNodeDefinition('text-input'),
+      type: 'core/text-input',
+      id: 'articleInput',
       data: {
         config: {
           value:
@@ -29,9 +19,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       height: 477,
     },
     {
-      type: "text-input",
-      id: "summarySystemPrompt",
-      definition: findNodeDefinition('text-input'),
+      type: 'core/text-input',
+      id: 'summarySystemPrompt',
       data: {
         config: {
           value:
@@ -46,12 +35,11 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       height: 200,
     },
     {
-      type: "generate-text",
-      id: "summarizeLLM",
-      definition: findNodeDefinition('generate-text'),
+      type: 'core/generate-text',
+      id: 'summarizeLLM',
       data: {
         config: {
-          model: "llama-3.1-8b-instant",
+          model: 'llama-3.1-8b-instant',
         },
         dynamicHandles: {
           tools: [],
@@ -63,9 +51,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       },
     },
     {
-      type: "text-input",
-      id: "validationSystemPrompt",
-      definition: findNodeDefinition('text-input'),
+      type: 'core/text-input',
+      id: 'validationSystemPrompt',
       data: {
         config: {
           value:
@@ -80,12 +67,11 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       height: 348,
     },
     {
-      type: "generate-text",
-      id: "validateLLM",
-      definition: findNodeDefinition('generate-text'),
+      type: 'core/generate-text',
+      id: 'validateLLM',
       data: {
         config: {
-          model: "llama-3.3-70b-versatile",
+          model: 'llama-3.3-70b-versatile',
         },
         dynamicHandles: {
           tools: [
@@ -108,9 +94,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       },
     },
     {
-      type: "prompt-crafter",
-      id: "93I9QA0fcq6Mqb_EP6wYx",
-      definition: findNodeDefinition('prompt-crafter'),
+      type: 'core/prompt-crafter',
+      id: '93I9QA0fcq6Mqb_EP6wYx',
       data: {
         config: {
           template:
@@ -135,12 +120,11 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       },
     },
     {
-      type: "generate-text",
-      id: "Nr22stf-aM3K9KZ7fHREZ",
-      definition: findNodeDefinition('generate-text'),
+      type: 'core/generate-text',
+      id: 'Nr22stf-aM3K9KZ7fHREZ',
       data: {
         config: {
-          model: "llama-3.1-8b-instant",
+          model: 'llama-3.1-8b-instant',
         },
         dynamicHandles: {
           tools: [],
@@ -152,9 +136,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       },
     },
     {
-      type: "text-input",
-      id: "97RH-yQMOC0ANhS2vFhcO",
-      definition: findNodeDefinition('text-input'),
+      type: 'core/text-input',
+      id: '97RH-yQMOC0ANhS2vFhcO',
       data: {
         config: {
           value:
@@ -169,9 +152,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       height: 219,
     },
     {
-      type: "visualize-text",
-      id: "PqH1msuO-XKcAzeKmY72Y",
-      definition: findNodeDefinition('visualize-text'),
+      type: 'core/visualize-text',
+      id: 'PqH1msuO-XKcAzeKmY72Y',
       data: {},
       position: {
         x: 2423.6352966782147,
@@ -181,9 +163,8 @@ export const chainWorkflowDefinition: WorkflowDefinition = {
       height: 636,
     },
     {
-      type: "visualize-text",
-      id: "lo9ImZY7ZBHw2xTEhj2X_",
-      definition: findNodeDefinition('visualize-text'),
+      type: 'core/visualize-text',
+      id: 'lo9ImZY7ZBHw2xTEhj2X_',
       data: {},
       position: {
         x: 1660.8667277057014,

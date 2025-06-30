@@ -35,4 +35,11 @@ export interface FlowEdge {
   targetHandle?: string;
   type?: string;
   data?: any;
-} 
+}
+
+export interface WorkflowStatusResponse {
+  workflowId: string;
+  status: 'idle' | 'running' | 'success' | 'error';
+  lastRun: string;
+  errorCount: number;
+}

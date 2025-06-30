@@ -4,7 +4,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
   nodes: [
     {
       id: 'content-request',
-      type: 'text-input',
+      type: 'core/text-input',
       position: { x: 100, y: 300 },
       data: {
         config: {
@@ -16,7 +16,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'analyze-request',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 500, y: 300 },
       data: {
         config: {
@@ -29,7 +29,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'blog-writer',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 100 },
       data: {
         config: {
@@ -42,7 +42,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'social-media-creator',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 300 },
       data: {
         config: {
@@ -55,7 +55,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'seo-specialist',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 500 },
       data: {
         config: {
@@ -68,7 +68,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'blog-output',
-      type: 'visualize-text',
+      type: 'core/visualize-text',
       position: { x: 1300, y: 100 },
       data: {},
       width: 350,
@@ -76,7 +76,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'social-output',
-      type: 'visualize-text',
+      type: 'core/visualize-text',
       position: { x: 1300, y: 300 },
       data: {},
       width: 350,
@@ -84,7 +84,7 @@ export const routingWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'seo-output',
-      type: 'visualize-text',
+      type: 'core/visualize-text',
       position: { x: 1300, y: 500 },
       data: {},
       width: 350,

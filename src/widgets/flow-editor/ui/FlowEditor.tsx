@@ -17,6 +17,7 @@ import { Button } from '@/shared/ui/button';
 import { Eye, PenLine } from 'lucide-react';
 import { useWorkflow } from '@/shared/hooks/use-workflow';
 import { useNodeTypes } from '@/shared/hooks/use-node-types';
+import { useWorkflowStatus } from '@/shared/hooks/use-workflow-status';
 import type { WorkflowResponse } from '@/shared/types/workflow';
 import type { FlowNode, FlowEdge } from '@/shared/lib/flow/workflow';
 import { NodePalette } from './NodePalette';
@@ -29,13 +30,17 @@ import { TextInputNodeController } from '@/shared/ui/flow/text-input-node-contro
 import { VisualizeTextNodeController } from '@/shared/ui/flow/visualize-text-node-controller';
 import { JsonNodeController } from '@/shared/ui/flow/json-node-controller';
 import { StatusEdgeController } from '@/shared/ui/flow/status-edge-controller';
+import { HttpRequestNodeController } from '@/shared/ui/flow/http-request-node-controller';
+import { IfConditionNodeController } from '@/shared/ui/flow/if-condition-node-controller';
 
 const nodeTypes = {
-  'generate-text': GenerateTextNodeController,
-  'prompt-crafter': PromptCrafterNodeController,
-  'text-input': TextInputNodeController,
-  'visualize-text': VisualizeTextNodeController,
-  'json-node': JsonNodeController,
+  'core/generate-text': GenerateTextNodeController,
+  'core/prompt-crafter': PromptCrafterNodeController,
+  'core/text-input': TextInputNodeController,
+  'core/visualize-text': VisualizeTextNodeController,
+  'core/json-node': JsonNodeController,
+  'core/http-request': HttpRequestNodeController,
+  'core/if-condition': IfConditionNodeController,
 };
 
 const edgeTypes = {
@@ -62,6 +67,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   
   // Fetch node types from API
   const { data: apiNodeTypes, isLoading: nodeTypesLoading } = useNodeTypes();
+  const { data: workflowStatus } = useWorkflowStatus(workflow.id);
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { screenToFlowPosition } = useReactFlow();
@@ -121,9 +127,9 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
   };
 
   const formatLastRun = () => {
-    if (!workflowExecutionState.finishedAt) return undefined;
+    if (!workflowStatus?.lastRun) return undefined;
     
-    const date = new Date(workflowExecutionState.finishedAt);
+    const date = new Date(workflowStatus.lastRun);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
@@ -137,22 +143,15 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
     return date.toLocaleDateString();
   };
 
-  const getWorkflowStatus = () => {
-    if (workflowExecutionState.isRunning) return 'running';
-    if (workflowExecutionState.errors.length > 0) return 'error';
-    if (workflowExecutionState.finishedAt) return 'success';
-    return 'idle';
-  };
-
   return (
     <div className="h-full w-full flex flex-col">
       {/* Editor Subheader */}
       <EditorSubheader
         workflowName={workflow?.name || 'Untitled Workflow'}
-        isRunning={workflowExecutionState.isRunning}
+        isRunning={workflowStatus?.status === 'running'}
         lastRun={formatLastRun()}
-        status={getWorkflowStatus()}
-        errorCount={workflowExecutionState.errors.length}
+        status={workflowStatus?.status || 'idle'}
+        errorCount={workflowStatus?.errorCount || 0}
         isPaletteOpen={isPaletteOpen}
         onRun={handleRunWorkflow}
         onSave={handleSaveWorkflow}

@@ -4,7 +4,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
   nodes: [
     {
       id: 'exam-request',
-      type: 'text-input',
+      type: 'core/text-input',
       position: { x: 100, y: 300 },
       data: {
         config: {
@@ -16,7 +16,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'multiple-choice-creator',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 500, y: 100 },
       data: {
         config: {
@@ -29,7 +29,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'short-answer-creator',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 500, y: 300 },
       data: {
         config: {
@@ -42,7 +42,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'essay-creator',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 500, y: 500 },
       data: {
         config: {
@@ -55,7 +55,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'exam-aggregator',
-      type: 'generate-text',
+      type: 'core/generate-text',
       position: { x: 900, y: 300 },
       data: {
         config: {
@@ -68,7 +68,7 @@ export const parallelizationWorkflowDefinition: WorkflowDefinition = {
     },
     {
       id: 'final-exam',
-      type: 'visualize-text',
+      type: 'core/visualize-text',
       position: { x: 1300, y: 300 },
       data: {},
       width: 350,

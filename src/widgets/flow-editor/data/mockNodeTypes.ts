@@ -3,7 +3,7 @@ import type { NodeType } from '@/shared/types/node';
 export const MOCK_NODE_TYPES: NodeType[] = [
   {
     // Basic identification
-    id: 'text-input',
+    id: 'core/text-input',
     name: 'Text Input',
     description: 'Input text data into the workflow',
     category: 'core',
@@ -67,9 +67,17 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     // Component mapping (temporary until git-based)
     componentType: 'text-input',
     
+    // Git Repository
+    repository: {
+      repository: 'sentiae/core-nodes',
+      branch: 'main',
+      path: 'text-input',
+      version: '1.0.0',
+    },
+    
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
       keywords: ['input', 'text', 'core'],
       createdAt: '2024-01-01',
@@ -79,7 +87,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
   
   {
     // Basic identification
-    id: 'visualize-text',
+    id: 'core/visualize-text',
     name: 'Visualize Text',
     description: 'Display and visualize text content with markdown support',
     category: 'core',
@@ -138,9 +146,17 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     // Component mapping (temporary until git-based)
     componentType: 'visualize-text',
     
+    // Git Repository
+    repository: {
+      repository: 'sentiae/core-nodes',
+      branch: 'main',
+      path: 'visualize-text',
+      version: '1.0.0',
+    },
+
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
       keywords: ['visualization', 'markdown', 'display', 'core'],
       createdAt: '2024-01-01',
@@ -150,7 +166,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
   
   {
     // Basic identification
-    id: 'generate-text',
+    id: 'core/generate-text',
     name: 'Generate Text',
     description: 'Generate text using AI models with customizable tools',
     category: 'ai',
@@ -251,6 +267,14 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     // Component mapping (temporary until git-based)
     componentType: 'generate-text',
     
+    // Git Repository
+    repository: {
+      repository: 'sentiae/core-nodes',
+      branch: 'main',
+      path: 'generate-text',
+      version: '1.0.0',
+    },
+
     // Execution configuration
     execution: {
       timeout: 300, // 5 minutes
@@ -260,9 +284,9 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
-      keywords: ['ai', 'generation', 'text', 'llm'],
+      keywords: ['ai', 'text generation', 'llm', 'core'],
       createdAt: '2024-01-01',
       updatedAt: '2024-01-01',
     },
@@ -270,9 +294,9 @@ export const MOCK_NODE_TYPES: NodeType[] = [
   
   {
     // Basic identification
-    id: 'prompt-crafter',
+    id: 'core/prompt-crafter',
     name: 'Prompt Crafter',
-    description: 'Create dynamic prompts with templates and variable inputs',
+    description: 'Design and test complex prompts with multiple variables',
     category: 'ai',
     version: '1.0.0',
     
@@ -361,11 +385,19 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     // Component mapping (temporary until git-based)
     componentType: 'prompt-crafter',
     
+    // Git Repository
+    repository: {
+      repository: 'sentiae/core-nodes',
+      branch: 'main',
+      path: 'prompt-crafter',
+      version: '1.0.0',
+    },
+
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
-      keywords: ['prompt', 'template', 'ai', 'dynamic'],
+      keywords: ['prompt', 'template', 'ai', 'core'],
       createdAt: '2024-01-01',
       updatedAt: '2024-01-01',
     },
@@ -373,9 +405,9 @@ export const MOCK_NODE_TYPES: NodeType[] = [
   
   {
     // Basic identification
-    id: 'json-node',
-    name: 'JSON Node Builder',
-    description: 'Create nodes from JSON definitions dynamically',
+    id: 'core/json-node',
+    name: 'JSON Node',
+    description: 'Input, validate, and manipulate JSON data',
     category: 'core',
     version: '1.0.0',
     
@@ -442,20 +474,27 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     // Component mapping (temporary until git-based)
     componentType: 'json-node',
     
+    // Git Repository
+    repository: {
+      repository: 'sentiae/core-nodes',
+      branch: 'main',
+      path: 'json-node',
+      version: '1.0.0',
+    },
+
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
-      keywords: ['json', 'dynamic', 'builder', 'core'],
+      keywords: ['json', 'data', 'structure', 'core'],
       createdAt: '2024-01-01',
       updatedAt: '2024-01-01',
     },
   },
 
-  // Additional nodes with git repository examples
   {
     // Basic identification
-    id: 'http-request',
+    id: 'core/http-request',
     name: 'HTTP Request',
     description: 'Make HTTP requests to external APIs',
     category: 'integration',
@@ -543,15 +582,12 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     
     // Git repository for code-based execution
     repository: {
-      repository: 'sentiae/node-http-request',
+      repository: 'sentiae/core-nodes',
       branch: 'main',
-      path: 'src',
+      path: 'http-request',
+      version: '1.0.0',
       buildCommand: 'npm install && npm run build',
       runCommand: 'node dist/index.js',
-      dependencies: ['axios', 'joi'],
-      environment: {
-        NODE_ENV: 'production',
-      },
     },
     
     // Features
@@ -587,7 +623,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
       keywords: ['http', 'api', 'request', 'integration'],
       createdAt: '2024-01-01',
@@ -597,7 +633,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
   
   {
     // Basic identification
-    id: 'if-condition',
+    id: 'core/if-condition',
     name: 'If Condition',
     description: 'Conditional logic branching based on input evaluation',
     category: 'logic',
@@ -669,12 +705,12 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     
     // Git repository for code-based execution
     repository: {
-      repository: 'sentiae/node-if-condition',
+      repository: 'sentiae/core-nodes',
       branch: 'main',
-      path: 'src',
+      path: 'if-condition',
+      version: '1.0.0',
       buildCommand: 'npm install && npm run build',
       runCommand: 'node dist/index.js',
-      dependencies: ['safe-eval'],
     },
     
     // Features
@@ -698,7 +734,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     
     // Metadata
     metadata: {
-      author: 'Sentiae',
+      author: 'core',
       license: 'MIT',
       keywords: ['condition', 'logic', 'branching', 'if'],
       createdAt: '2024-01-01',
