@@ -35,6 +35,7 @@ export interface ConfigField {
     max?: number;
     showDescription?: boolean;
     section?: 'top' | 'bottom' | 'inline'; // where to render the handles UI
+    initial?: Array<{ name: string; description?: string }>;
   };
   
   // Field-specific props

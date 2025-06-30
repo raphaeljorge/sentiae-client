@@ -130,7 +130,7 @@ export function isNodeWithDynamicHandles<T extends FlowNode>(
 	{
 		data: {
 			dynamicHandles: {
-				[key in string]: DynamicHandle[];
+				[key: string]: DynamicHandle[];
 			};
 		};
 	}
@@ -154,29 +154,31 @@ function buildDependencyGraph(edges: FlowEdge[]): {
 	const connectionMap = new Map<string, FlowEdge[]>();
 
 	for (const edge of edges) {
-		// Track connections per target handle
-		const targetKey = `${edge.target}-${edge.targetHandle}`;
-		const existingConnections = connectionMap.get(targetKey) || [];
-		connectionMap.set(targetKey, [...existingConnections, edge]);
+		if (edge.sourceHandleId && edge.targetHandleId) {
+			// Track connections per target handle
+			const targetKey = `${edge.target}-${edge.targetHandleId}`;
+			const existingConnections = connectionMap.get(targetKey) || [];
+			connectionMap.set(targetKey, [...existingConnections, edge]);
 
-		// Build dependency graph
-		const existingDependencies = dependencies.get(edge.target) || [];
-		dependencies.set(edge.target, [
-			...existingDependencies,
-			{
-				node: edge.source,
-				sourceHandle: edge.sourceHandle,
-			},
-		]);
+			// Build dependency graph
+			const existingDependencies = dependencies.get(edge.target) || [];
+			dependencies.set(edge.target, [
+				...existingDependencies,
+				{
+					node: edge.source,
+					sourceHandle: edge.sourceHandleId,
+				},
+			]);
 
-		const existingDependents = dependents.get(edge.source) || [];
-		dependents.set(edge.source, [
-			...existingDependents,
-			{
-				node: edge.target,
-				targetHandle: edge.targetHandle,
-			},
-		]);
+			const existingDependents = dependents.get(edge.source) || [];
+			dependents.set(edge.source, [
+				...existingDependents,
+				{
+					node: edge.target,
+					targetHandle: edge.targetHandleId,
+				},
+			]);
+		}
 	}
 
 	return { dependencies, dependents, connectionMap };
@@ -240,8 +242,8 @@ function validateMultipleSources(
 					id: edge.id,
 					source: edge.source,
 					target: edge.target,
-					sourceHandle: edge.sourceHandle,
-					targetHandle: edge.targetHandle,
+					sourceHandle: edge.sourceHandleId || '',
+					targetHandle: edge.targetHandleId || '',
 				})),
 			});
 		}
@@ -309,13 +311,15 @@ function detectCycles(
 
 	const error: CycleError = {
 		type: "cycle",
-		message: `Workflow contains cycles between nodes: ${cycleNodes.join(", ")}`,
+		message: `Workflow contains cycles between nodes: ${cycleNodes.join(
+			", ",
+		)}`,
 		edges: cycleEdges.map((edge) => ({
 			id: edge.id,
 			source: edge.source,
 			target: edge.target,
-			sourceHandle: edge.sourceHandle,
-			targetHandle: edge.targetHandle,
+			sourceHandle: edge.sourceHandleId || '',
+			targetHandle: edge.targetHandleId || '',
 		})),
 	};
 
@@ -339,14 +343,16 @@ function validateRequiredHandles(
 
 	// Build connection maps
 	for (const edge of edges) {
-		const targetKey = `${edge.target}-${edge.targetHandle}`;
-		const sourceKey = `${edge.source}-${edge.sourceHandle}`;
+		if (edge.sourceHandleId && edge.targetHandleId) {
+			const targetKey = `${edge.target}-${edge.targetHandleId}`;
+			const sourceKey = `${edge.source}-${edge.sourceHandleId}`;
 
-		const targetConnections = connectionsByTarget.get(targetKey) || [];
-		connectionsByTarget.set(targetKey, [...targetConnections, edge]);
+			const targetConnections = connectionsByTarget.get(targetKey) || [];
+			connectionsByTarget.set(targetKey, [...targetConnections, edge]);
 
-		const sourceConnections = connectionsBySource.get(sourceKey) || [];
-		connectionsBySource.set(sourceKey, [...sourceConnections, edge]);
+			const sourceConnections = connectionsBySource.get(sourceKey) || [];
+			connectionsBySource.set(sourceKey, [...sourceConnections, edge]);
+		}
 	}
 
 	// Check each node against its type configuration

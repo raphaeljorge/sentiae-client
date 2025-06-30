@@ -20,7 +20,7 @@ export const MODELS = [
 export type Model = (typeof MODELS)[number];
 
 interface ModelSelectorProps extends SelectProps {
-	value: Model;
+	value?: Model;
 	onChange: (value: Model) => void;
 	disabledModels?: Model[];
 }
@@ -32,7 +32,7 @@ export function ModelSelector({
 	...props
 }: ModelSelectorProps) {
 	return (
-		<Select value={value} onValueChange={onChange} {...props}>
+		<Select value={value || ''} onValueChange={onChange} {...props}>
 			<SelectTrigger className="w-full nodrag">
 				<SelectValue placeholder="Select model" />
 			</SelectTrigger>

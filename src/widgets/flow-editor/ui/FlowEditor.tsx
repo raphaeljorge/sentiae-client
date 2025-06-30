@@ -10,11 +10,12 @@ import {
   Panel,
   BackgroundVariant,
   useReactFlow,
+  useUpdateNodeInternals,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { Button } from '@/shared/ui/button';
-import { Eye, PenLine } from 'lucide-react';
+import { Eye, Loader2, PenLine } from 'lucide-react';
 import { useWorkflow } from '@/shared/hooks/use-workflow';
 import { useNodeTypes } from '@/shared/hooks/use-node-types';
 import { useWorkflowStatus } from '@/shared/hooks/use-workflow-status';
@@ -72,6 +73,7 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { screenToFlowPosition } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
 
   // Initialize node types when loaded
   useEffect(() => {
@@ -89,6 +91,21 @@ function FlowEditorContent({ workflow }: FlowEditorProps) {
       initializeWorkflow(typedNodes || [], typedEdges || []);
     }
   }, [workflow, initializeWorkflow]);
+
+  // When nodes are loaded or changed, update their internals
+  useEffect(() => {
+    if (nodes.length > 0) {
+      updateNodeInternals(nodes.map(n => n.id));
+    }
+  }, [nodes, updateNodeInternals]);
+
+  if (nodeTypesLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   const onConnect = (params: Connection) => {
     onConnectWorkflow(params);

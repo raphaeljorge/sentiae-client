@@ -214,6 +214,7 @@ const useWorkflow = createWithEqualityFn<WorkflowState>((set, get) => ({
 	createNode(nodeType, position) {
 		const { nodeTypes } = get();
 		const newNode = createNode(nodeType, position, nodeTypes);
+
 		set((state) => ({
 			nodes: [...state.nodes, newNode],
 		}));

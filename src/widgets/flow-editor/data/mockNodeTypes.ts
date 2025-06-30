@@ -163,7 +163,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
         props: { language: 'prompt', height: '150px' },
       },
       {
-        key: 'inputs',
+        key: 'template-tags',
         type: 'dynamic-handles',
         label: 'Template Inputs',
         handles: {
