@@ -60,6 +60,11 @@ const data = {
       icon: LayoutDashboardIcon,
     },
     {
+      title: 'Code Editor',
+      url: '/code',
+      icon: FileCodeIcon,
+    },
+    {
       title: 'Lifecycle',
       url: '#',
       icon: ListIcon,
