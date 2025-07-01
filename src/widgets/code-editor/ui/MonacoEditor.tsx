@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import type { EditorFile } from '../types';
+import { useLanguageClient } from '../hooks/use-language-client';
 
 interface MonacoEditorProps {
   file: EditorFile;
@@ -10,9 +11,12 @@ interface MonacoEditorProps {
 
 export function MonacoEditor({ file, onChange, onMount }: MonacoEditorProps) {
   const editorRef = useRef<any>(null);
+  const monacoRef = useRef<any>(null);
+  const { client, error, isConnected } = useLanguageClient(monacoRef.current);
 
   const handleEditorDidMount = (editor: any, monaco: any) => {
     editorRef.current = editor;
+    monacoRef.current = monaco;
     onMount?.(editor, monaco);
 
     // Configure editor settings
@@ -49,6 +53,15 @@ export function MonacoEditor({ file, onChange, onMount }: MonacoEditorProps) {
       }
     }
   }, [file.path, file.content]);
+
+  // Log language server connection status
+  useEffect(() => {
+    if (error) {
+      console.error('Language Server Error:', error);
+    } else {
+      console.log('Language Server Connected:', isConnected);
+    }
+  }, [error, isConnected]);
 
   const handleEditorChange = (value: string | undefined) => {
     onChange?.(value);
