@@ -12,7 +12,6 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     ui: {
       icon: 'PenLine',
       width: 250,
-      height: 200,
       color: '#06b6d4', // Cyan
     },
     
@@ -58,7 +57,6 @@ export const MOCK_NODE_TYPES: NodeType[] = [
     ui: {
       icon: 'Eye',
       width: 300,
-      height: 200,
       color: '#8b5cf6', // Purple
     },
     
@@ -110,7 +108,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
       {
         key: 'tools',
         type: 'dynamic-handles',
-        label: 'Tool Outputs',
+        label: 'Custom Outputs',
         handles: {
           type: 'source',
           position: 'right',
@@ -165,7 +163,7 @@ export const MOCK_NODE_TYPES: NodeType[] = [
       {
         key: 'template-tags',
         type: 'dynamic-handles',
-        label: 'Template Inputs',
+        label: 'Custom Inputs',
         handles: {
           type: 'target',
           position: 'left',

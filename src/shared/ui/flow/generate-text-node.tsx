@@ -103,7 +103,8 @@ export function GenerateTextNode({
 	return (
 		<BaseNode
 			selected={selected}
-			className={cn("w-[350px] p-0 hover:ring-orange-500", {
+			nodeType="core/generate-text"
+			className={cn("w-[350px] p-0", {
 				"border-orange-500": data.status === "processing",
 				"border-red-500": data.status === "error",
 			})}
@@ -167,7 +168,7 @@ export function GenerateTextNode({
 			<div className="border-t border-border mt-2">
 				<div>
 					<div className="flex items-center justify-between py-2 px-4 bg-muted">
-						<span className="text-sm font-medium">Tool outputs</span>
+						<span className="text-sm font-medium">Outputs</span>
 						<EditableHandleDialog
 							variant="create"
 							onSave={handleCreateTool}

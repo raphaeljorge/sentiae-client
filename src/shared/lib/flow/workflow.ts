@@ -1,9 +1,4 @@
-import type { GenerateTextNodeController } from "@/shared/ui/flow/generate-text-node-controller";
-import type { JsonNodeController } from "@/shared/ui/flow/json-node-controller";
-import type { PromptCrafterNodeController } from "@/shared/ui/flow/prompt-crafter-node-controller";
 import type { StatusEdgeController } from "@/shared/ui/flow/status-edge-controller";
-import type { TextInputNodeController } from "@/shared/ui/flow/text-input-node-controller";
-import type { VisualizeTextNodeController } from "@/shared/ui/flow/visualize-text-node-controller";
 import { nanoid } from "nanoid";
 import type { NodeType } from "@/shared/types/node";
 
@@ -101,14 +96,21 @@ const NODES_CONFIG: Partial<
 
 // Nodes
 
-type BaseFlowNode =
-	| VisualizeTextNodeController
-	| TextInputNodeController
-	| PromptCrafterNodeController
-	| GenerateTextNodeController
-	| JsonNodeController;
-
-export type FlowNode = BaseFlowNode & { definition?: NodeType };
+export type FlowNode = {
+	id: string;
+	type: string;
+	position: { x: number; y: number };
+	data: {
+		config?: Record<string, any>;
+		dynamicHandles?: Record<string, DynamicHandle[]>;
+		executionState?: {
+			status?: string;
+			targets?: Record<string, any>;
+		};
+		definition?: NodeType;
+	};
+	definition?: NodeType;
+};
 
 // Edges
 

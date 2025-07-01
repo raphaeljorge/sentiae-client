@@ -7,18 +7,23 @@ export const ResizableNode = React.forwardRef<
 	HTMLDivElement,
 	React.HTMLAttributes<HTMLDivElement> & {
 		selected: boolean;
+		nodeType?: string;
+		nodeDefinition?: any;
 	}
->(({ className, selected, style, children, ...props }, ref) => (
+>(({ className, selected, nodeType, nodeDefinition, style, children, ...props }, ref) => (
 	<BaseNode
 		ref={ref}
+		selected={selected}
+		nodeType={nodeType}
+		nodeDefinition={nodeDefinition}
 		style={{
 			...style,
 			minHeight: 200,
 			minWidth: 250,
-			maxHeight: 800,
 			maxWidth: 800,
+			// Remove maxHeight to allow natural growth
 		}}
-		className={cn(className, "h-full p-0 hover:ring-orange-500")}
+		className={cn(className, "min-h-[200px] p-0 hover:ring-orange-500")}
 		{...props}
 	>
 		<NodeResizer isVisible={selected} />

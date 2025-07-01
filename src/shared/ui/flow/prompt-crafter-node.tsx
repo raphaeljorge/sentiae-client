@@ -174,7 +174,8 @@ export function PromptCrafterNode({
 	return (
 		<BaseNode
 			selected={selected}
-			className={cn("w-[350px] p-0 hover:ring-orange-500", {
+			nodeType="core/prompt-crafter"
+			className={cn("w-[350px] p-0", {
 				"border-orange-500": data.status === "processing",
 				"border-red-500": data.status === "error",
 			})}

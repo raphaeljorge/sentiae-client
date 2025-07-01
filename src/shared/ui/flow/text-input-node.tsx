@@ -30,8 +30,8 @@ export interface TextInputProps extends NodeProps<TextInputNode> {
 export function TextInputNode({
 	id,
 	selected,
-	data,
 	deletable,
+	data,
 	onTextChange,
 	onDeleteNode,
 }: TextInputProps) {
@@ -39,6 +39,7 @@ export function TextInputNode({
 		<ResizableNode
 			id={id}
 			selected={selected}
+			nodeType="core/text-input"
 			className={cn("flex flex-col h-full", {
 				"border-orange-500": data.status === "processing",
 				"border-red-500": data.status === "error",

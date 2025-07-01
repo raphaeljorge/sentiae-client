@@ -11,7 +11,7 @@ import { Textarea } from "@/shared/ui/textarea";
 import { cn } from "@/shared/lib/utils";
 import { BaseHandle } from "@/shared/ui/flow/base-handle";
 import type { HandleProps, Node } from "@xyflow/react";
-import { useOnSelectionChange } from "@xyflow/react";
+import { useOnSelectionChange, Position } from "@xyflow/react";
 import { Edit2, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useCallback } from "react";
@@ -195,10 +195,7 @@ const EditableHandle = React.forwardRef<HTMLDivElement, EditableHandleProps>(
 					{...handleProps}
 				/>
 				<div
-					className={cn("flex items-center px-4 py-3 gap-3 nodrag", {
-						"justify-end": position === "right",
-						"justify-start": position === "left",
-					})}
+					className={cn("flex justify-between items-center px-4 py-3 gap-3 nodrag")}
 				>
 					<div className="flex flex-col min-w-0">
 						<span
@@ -222,7 +219,7 @@ const EditableHandle = React.forwardRef<HTMLDivElement, EditableHandleProps>(
 							description={description}
 							onSave={handleSave}
 							onCancel={resetEditing}
-							align={position === "left" ? "start" : "end"}
+							align={position === Position.Left ? "start" : "end"}
 							showDescription={showDescription}
 						>
 							<Button

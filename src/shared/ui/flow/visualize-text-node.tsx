@@ -35,6 +35,7 @@ export function VisualizeTextNode({
 	return (
 		<ResizableNode
 			selected={selected}
+			nodeType="core/visualize-text"
 			className={cn("flex flex-col", {
 				"border-orange-500": data.status === "processing",
 				"border-red-500": data.status === "error",

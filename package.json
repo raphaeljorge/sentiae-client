@@ -7,13 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "biome check .",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "biome check . --write",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "prepare": "husky",
-    "server": "node server.js"
+    "server": "node server.js",
+    "generate-colors": "node scripts/generate-node-colors.js"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^0.2.14",

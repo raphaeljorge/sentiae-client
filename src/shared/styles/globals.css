@@ -135,3 +135,106 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* React Flow handle positioning fixes */
+.react-flow__handle {
+  /* Ensure handles are always positioned on the exact border */
+  border: 3px solid hsl(var(--primary)) !important;
+  background: hsl(var(--background)) !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
+.react-flow__handle:hover {
+  background: hsl(var(--primary)) !important;
+  border-color: hsl(var(--primary-foreground)) !important;
+}
+
+/* Force handles to be positioned on the node border by using more aggressive positioning */
+.react-flow__handle-left {
+  left: -12px !important; /* Half of handle width to center on border */
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.react-flow__handle-right {
+  right: -12px !important; /* Half of handle width to center on border */
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.react-flow__handle-top {
+  top: -12px !important; /* Half of handle height to center on border */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+.react-flow__handle-bottom {
+  bottom: -12px !important; /* Half of handle height to center on border */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+/* Ensure all node containers have proper positioning context */
+.react-flow__node {
+  position: relative !important;
+}
+
+/* Override any conflicting styles from node containers */
+.react-flow__node .react-flow__handle {
+  position: absolute !important;
+  z-index: 10 !important;
+}
+
+/* Handle specific node types that might have different padding */
+.react-flow__node [class*="p-0"] .react-flow__handle,
+.react-flow__node [class*="p-5"] .react-flow__handle,
+.react-flow__node [class*="p-2"] .react-flow__handle,
+.react-flow__node [class*="p-4"] .react-flow__handle {
+  /* Force positioning regardless of parent padding */
+  position: absolute !important;
+}
+
+/* Ensure handles are positioned relative to the node border, not content */
+.react-flow__node > div:first-child {
+  position: relative !important;
+}
+
+/* Override any transform conflicts */
+.react-flow__handle-left,
+.react-flow__handle-right,
+.react-flow__handle-top,
+.react-flow__handle-bottom {
+  transform-origin: center !important;
+}
+
+/* Specific rules for LabeledHandle containers */
+.react-flow__node .relative .react-flow__handle {
+  position: absolute !important;
+  z-index: 10 !important;
+}
+
+/* Force all handle containers to have proper positioning context */
+.react-flow__node .relative {
+  position: relative !important;
+}
+
+/* Override any flexbox interference */
+.react-flow__node .flex .react-flow__handle {
+  position: absolute !important;
+  z-index: 10 !important;
+}
+
+/* Ensure handles are always on the border regardless of parent structure */
+.react-flow__node * .react-flow__handle {
+  position: absolute !important;
+  z-index: 10 !important;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
-import { NodeProps, Position } from '@xyflow/react';
+import { NodeProps, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { Input } from '../input';
 import { Textarea } from '../textarea';
 import { Label } from '../label';
@@ -21,7 +21,7 @@ import { DynamicHandle } from '@/shared/lib/flow/workflow';
 import { cn } from '@/shared/lib/utils';
 import CodeMirror from '@uiw/react-codemirror';
 import { createTheme } from "@uiw/codemirror-themes";
-import { Package, PlusIcon } from 'lucide-react';
+import { Package, PlusIcon, Trash2 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { MarkdownContent } from '../markdown-content';
 
@@ -41,7 +41,8 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
   const { getNodeType } = useNodeTypes();
   const nodeData = data as any;
   const definition = nodeData.definition || getNodeType(type);
-  const { updateNode, addDynamicHandle, removeDynamicHandle } = useWorkflow();
+  const { updateNode, addDynamicHandle, removeDynamicHandle, deleteNode } = useWorkflow();
+  const updateNodeInternals = useUpdateNodeInternals();
 
   // State for form values
   const [formValues, setFormValues] = useState<Record<string, any>>({});
@@ -72,6 +73,16 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
     const newValues = { ...formValues, [key]: value };
     setFormValues(newValues);
     (updateNode as any)(id, type, { config: newValues });
+    
+    // Check if this is a textarea field with autoResize
+    const field = definition?.fields?.find((f: ConfigField) => f.key === key);
+    if (field?.type === 'textarea' && field?.props?.autoResize) {
+      // Update React Flow node dimensions after allowing DOM to update
+      // Use requestAnimationFrame to ensure DOM changes are complete
+      requestAnimationFrame(() => {
+        updateNodeInternals(id);
+      });
+    }
   };
 
   const handleCreateDynamicHandle = (key: string) => (name: string, description?: string) => {
@@ -86,6 +97,10 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
 
   const handleRemoveDynamicHandle = (key: string) => (handleId: string) => {
     removeDynamicHandle(id, type as any, key, handleId);
+  };
+
+  const handleDeleteNode = () => {
+    deleteNode(id);
   };
 
   const config = formValues;
@@ -104,7 +119,9 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
 
     return (
       <div key={field.key} className="space-y-2">
-        <Label htmlFor={field.key}>{field.label}</Label>
+        {field.type !== 'dynamic-handles' && (
+          <Label htmlFor={field.key}>{field.label}</Label>
+        )}
         {(() => {
           switch (field.type) {
             case 'string':
@@ -114,6 +131,7 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
                   placeholder={field.placeholder} 
                   value={fieldValue || ''} 
                   onChange={e => handleFieldChange(field.key, e.target.value)}
+                  {...field.props}
                 />
               );
             case 'textarea':
@@ -123,6 +141,7 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
                   placeholder={field.placeholder} 
                   value={fieldValue || ''} 
                   onChange={e => handleFieldChange(field.key, e.target.value)}
+                  {...field.props}
                 />
               );
             case 'number':
@@ -133,6 +152,7 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
                   placeholder={field.placeholder} 
                   value={fieldValue || ''} 
                   onChange={e => handleFieldChange(field.key, e.target.value)}
+                  {...field.props}
                 />
               );
             case 'boolean':
@@ -220,7 +240,7 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
 
   // Get node styling based on new format
   const getNodeClassName = () => {
-    const baseClasses = "p-0 h-full flex flex-col";
+    const baseClasses = "p-0 flex flex-col";
     const customClasses = definition.ui?.className || '';
     
     return `${baseClasses} ${customClasses}`.trim();
@@ -242,6 +262,8 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
     return (
       <BaseNode 
         selected={selected}
+        nodeType={type}
+        nodeDefinition={definition}
         className={getNodeClassName()}
         style={getNodeStyle()}
       >
@@ -250,6 +272,15 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
           <NodeHeaderTitle>{definition.name}</NodeHeaderTitle>
           <NodeHeaderActions>
             <NodeHeaderStatus status={nodeData.executionState?.status} />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDeleteNode}
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+              title="Delete node"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </NodeHeaderActions>
         </NodeHeader>
         <Separator />
@@ -259,7 +290,7 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
           </div>
         </div>
         {/* Render input handle */}
-        <div className="flex justify-start pt-2 pb-4 text-sm">
+        <div className="px-4 py-2">
           {definition.handles.filter((h: HandleDefinition) => h.type === 'target').map((handle: HandleDefinition) => (
             <LabeledHandle
               key={handle.id}
@@ -285,6 +316,8 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
   return (
     <BaseNode 
       selected={selected}
+      nodeType={type}
+      nodeDefinition={definition}
       className={getNodeClassName()}
       style={getNodeStyle()}
     >
@@ -295,44 +328,55 @@ function GenericNode({ id, data, type, selected }: NodeProps) {
         <NodeHeaderTitle>{definition.name}</NodeHeaderTitle>
         <NodeHeaderActions>
           <NodeHeaderStatus status={nodeData.executionState?.status} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDeleteNode}
+            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+            title="Delete node"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </NodeHeaderActions>
       </NodeHeader>
       <Separator />
       
       {/* Main content area with fields */}
       {regularFields.length > 0 && (
-        <div className="p-4 flex flex-col gap-4">
+        <div className="p-2 flex flex-col gap-4">
           {regularFields.map(renderField)}
         </div>
       )}
       
       {/* Static Handles Section */}
       {definition.handles && definition.handles.length > 0 && (
-        <div className="grid grid-cols-[2fr,1fr] gap-2 px-4 py-2 text-sm">
-          {/* Input handles (targets) on the left */}
-          <div className="flex flex-col gap-2 min-w-0">
-            {definition.handles.filter((h: HandleDefinition) => h.type === 'target').map((handle: HandleDefinition) => (
-              <LabeledHandle
-                key={handle.id}
-                id={handle.id}
-                type={handle.type}
-                position={handle.position as Position}
-                title={handle.title}
-              />
-            ))}
-          </div>
-          
-          {/* Output handles (sources) on the right */}
-          <div className="justify-self-end">
-            {definition.handles.filter((h: HandleDefinition) => h.type === 'source').map((handle: HandleDefinition) => (
-              <LabeledHandle
-                key={handle.id}
-                id={handle.id}
-                type={handle.type}
-                position={handle.position as Position}
-                title={handle.title}
-              />
-            ))}
+        <div className="px-0 py-1">
+          <div className="flex justify-between items-center gap-4">
+            {/* Input handles (targets) on the left */}
+            <div className="flex flex-col gap-2 min-w-0">
+              {definition.handles.filter((h: HandleDefinition) => h.type === 'target').map((handle: HandleDefinition) => (
+                <LabeledHandle
+                  key={handle.id}
+                  id={handle.id}
+                  type={handle.type}
+                  position={handle.position as Position}
+                  title={handle.title}
+                />
+              ))}
+            </div>
+            
+            {/* Output handles (sources) on the right */}
+            <div className="flex flex-col gap-2 min-w-0">
+              {definition.handles.filter((h: HandleDefinition) => h.type === 'source').map((handle: HandleDefinition) => (
+                <LabeledHandle
+                  key={handle.id}
+                  id={handle.id}
+                  type={handle.type}
+                  position={handle.position as Position}
+                  title={handle.title}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -2,16 +2,10 @@
 
 import { cn } from "@/shared/lib/utils";
 import type { HandleProps } from "@xyflow/react";
+import { Position } from "@xyflow/react";
 import React from "react";
 
 import { BaseHandle } from "@/shared/ui/flow/base-handle";
-
-const flexDirections = {
-	top: "flex-col",
-	right: "flex-row-reverse justify-end",
-	bottom: "flex-col-reverse justify-end",
-	left: "flex-row",
-};
 
 const LabeledHandle = React.forwardRef<
 	HTMLDivElement,
@@ -30,16 +24,33 @@ const LabeledHandle = React.forwardRef<
 			ref={ref}
 			title={title}
 			className={cn(
-				"relative flex items-center",
-				flexDirections[position],
+				"relative",
 				className,
 			)}
 		>
-			<BaseHandle position={position} className={handleClassName} {...props} />
-			{/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-			<label className={cn("px-3 text-foreground", labelClassName)}>
-				{title}
-			</label>
+			{/* Handle positioned by React Flow CSS - positioned relative to node */}
+			<BaseHandle 
+				position={position} 
+				className={cn(
+					"!absolute !z-10",
+					handleClassName
+				)} 
+				{...props} 
+			/>
+			{/* Label content */}
+			<div
+				className={cn("flex items-center px-4 py-1 gap-3 nodrag", {
+					"justify-end": position === Position.Right,
+					"justify-start": position === Position.Left,
+				})}
+			>
+				<span className={cn(
+					"text-foreground text-sm",
+					labelClassName
+				)}>
+					{title}
+				</span>
+			</div>
 		</div>
 	),
 );
